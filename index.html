@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   THEME VARIABLES
+═══════════════════════════════════════════════ */
+:root {
+  --bg:      #08090e;
+  --s1:      #0d0f18;
+  --s2:      #12141f;
+  --s3:      #181b28;
+  --border:  #1f2235;
+  --border2: #262a40;
+  --text:    #dde1f0;
+  --muted:   #5a6080;
+  --muted2:  #7a83a8;
+  --accent:  #c9a96e;
+  --accent2: #e8c98a;
+  --accent-rgb: 201,169,110;
+
+  --t1:#818cf8; --t1bg:#818cf812;
+  --t2:#b57bee; --t2bg:#b57bee12;
+  --t3:#38c9f0; --t3bg:#38c9f012;
+  --t4:#fb923c; --t4bg:#fb923c12;
+  --t5:#34d399; --t5bg:#34d39912;
+  --t6:#f87171; --t6bg:#f8717112;
+  --t7:#fbbf24; --t7bg:#fbbf2412;
+
+  --font-sz: 15px;
+  --line-h:  1.65;
+  --r:8px; --rL:14px;
+  --font-display:'Crimson Pro',Georgia,serif;
+  --font-mono:'IBM Plex Mono',monospace;
+  --font-body:'Source Sans 3',sans-serif;
+}
+
+/* Light theme */
+body.theme-light {
+  --bg:#f5f4ef; --s1:#ede9e0; --s2:#e5e0d4; --s3:#ddd8ca;
+  --border:#ccc8bc; --border2:#b8b3a5;
+  --text:#1a1814; --muted:#7a756a; --muted2:#56514a;
+  --accent:#8b5e2a; --accent2:#6b4520;
+}
+body.theme-cool {
+  --bg:#060b14; --s1:#090f1e; --s2:#0e1628; --s3:#131d32;
+  --border:#1a2440; --border2:#223060;
+  --accent:#5eb0ff; --accent2:#8eccff;
+  --accent-rgb:94,176,255;
+}
+body.theme-warm {
+  --bg:#0e0904; --s1:#160f07; --s2:#1d140a; --s3:#251a0f;
+  --border:#2e2010; --border2:#3d2c18;
+  --accent:#e09a45; --accent2:#f0b870;
+  --accent-rgb:224,154,69;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--font-body);font-size:var(--font-sz);
+  line-height:var(--line-h);display:flex;flex-direction:column;
+  min-height:100vh;overflow-x:hidden;
+  transition:background .3s,color .3s;
+}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--s1)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ═══════════════════════════════════════════════
+   TOP BAR
+═══════════════════════════════════════════════ */
+#topbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(8,9,14,.94);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:16px;
+  padding:0 24px;height:56px;
+  transition:background .3s;
+}
+body.theme-light #topbar{background:rgba(245,244,239,.94)}
+
+.logo{
+  font-family:var(--font-display);font-size:20px;font-weight:600;
+  color:var(--accent);letter-spacing:-.3px;white-space:nowrap;
+  display:flex;align-items:center;gap:8px;
+}
+.logo-sub{
+  font-size:10px;font-family:var(--font-mono);color:var(--muted);
+  font-weight:400;letter-spacing:.5px;align-self:flex-end;margin-bottom:3px;
+}
+
+#search-wrap{flex:1;max-width:380px;position:relative}
+#search{
+  width:100%;background:var(--s2);border:1px solid var(--border);
+  border-radius:8px;color:var(--text);font-family:var(--font-body);
+  font-size:13px;padding:7px 12px 7px 32px;outline:none;
+  transition:border-color .2s;
+}
+#search:focus{border-color:var(--accent)}
+#search::placeholder{color:var(--muted)}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none}
+
+.nav-tabs{display:flex;align-items:center;gap:2px;margin-left:auto}
+.nav-btn{
+  background:none;border:none;color:var(--muted2);cursor:pointer;
+  padding:6px 13px;border-radius:var(--r);font-size:13px;
+  font-family:var(--font-body);transition:all .15s;white-space:nowrap;
+}
+.nav-btn:hover{background:var(--s3);color:var(--text)}
+.nav-btn.active{background:var(--s3);color:var(--text);font-weight:600}
+
+.icon-btn{
+  background:none;border:1px solid var(--border);color:var(--muted2);
+  border-radius:var(--r);width:32px;height:32px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+  transition:all .15s;margin-left:6px;
+}
+.icon-btn:hover{color:var(--text);border-color:var(--border2)}
+
+/* ═══════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════ */
+#layout{display:flex;flex:1}
+
+#sidebar{
+  width:224px;flex-shrink:0;
+  position:sticky;top:56px;height:calc(100vh - 56px);
+  overflow-y:auto;background:var(--s1);
+  border-right:1px solid var(--border);
+  padding:20px 14px;
+}
+#main{flex:1;padding:24px 28px;min-width:0}
+
+.sidebar-section{margin-bottom:24px}
+.sidebar-lbl{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;
+  color:var(--muted);text-transform:uppercase;margin-bottom:8px;padding:0 4px;
+}
+.topic-filter,.sort-group{display:flex;flex-direction:column;gap:3px}
+.topic-btn,.sort-btn{
+  background:none;border:none;color:var(--muted2);cursor:pointer;
+  padding:6px 10px;border-radius:var(--r);font-size:13px;
+  font-family:var(--font-body);text-align:left;display:flex;
+  align-items:center;gap:8px;transition:all .15s;
+}
+.topic-btn:hover,.sort-btn:hover{background:var(--s3);color:var(--text)}
+.topic-btn.active,.sort-btn.active{background:var(--s3);color:var(--text);font-weight:600}
+.topic-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.topic-count{
+  margin-left:auto;font-family:var(--font-mono);font-size:10px;
+  color:var(--muted);background:var(--s2);padding:1px 5px;border-radius:8px;
+}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.stat-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:9px;text-align:center}
+.stat-num{font-family:var(--font-mono);font-size:18px;font-weight:500;color:var(--accent)}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* ═══════════════════════════════════════════════
+   CARDS VIEW
+═══════════════════════════════════════════════ */
+#cards-view{}
+.results-info{font-size:12px;color:var(--muted);margin-bottom:18px;font-family:var(--font-mono)}
+.results-info strong{color:var(--accent2)}
+#cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+
+.paper-card{
+  background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--rL);padding:18px;cursor:pointer;
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.paper-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--topic-color,var(--accent));opacity:0;transition:opacity .2s;
+}
+.paper-card:hover{border-color:var(--border2);background:var(--s2);transform:translateY(-2px);box-shadow:0 10px 36px rgba(0,0,0,.35)}
+.paper-card:hover::before{opacity:1}
+
+.card-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.card-badge{flex-shrink:0;font-size:15px;line-height:1;margin-top:2px}
+.card-title{font-family:var(--font-display);font-size:16px;font-weight:600;line-height:1.35;color:var(--text)}
+.card-meta{font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-bottom:9px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.card-venue{color:var(--accent);font-weight:500}
+.card-abstract{font-size:13px;color:var(--muted2);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-topics{display:flex;flex-wrap:wrap;gap:5px}
+.topic-tag{font-family:var(--font-mono);font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;letter-spacing:.2px}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+.card-date{font-family:var(--font-mono);font-size:10px;color:var(--muted)}
+.card-note-indicator{font-size:11px;color:var(--accent);font-family:var(--font-mono)}
+
+/* ═══════════════════════════════════════════════
+   GALLERY VIEW
+═══════════════════════════════════════════════ */
+#gallery-view{display:none}
+.gallery-header{margin-bottom:24px;display:flex;align-items:baseline;justify-content:space-between}
+.gallery-title{font-family:var(--font-display);font-size:26px;font-weight:300;color:var(--text);font-style:italic}
+.add-sentence-btn{
+  background:none;border:1px solid var(--border);color:var(--muted2);
+  border-radius:var(--r);padding:7px 14px;font-size:13px;cursor:pointer;
+  font-family:var(--font-body);transition:all .2s;display:flex;align-items:center;gap:7px;
+}
+.add-sentence-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+.gallery-topic-section{margin-bottom:32px}
+.gallery-topic-label{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.gallery-topic-name{font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:500}
+.gallery-divider{flex:1;height:1px;background:var(--border)}
+
+.quote-card{
+  background:var(--s1);border:1px solid var(--border);
+  border-left:2px solid var(--topic-color,var(--accent));
+  border-radius:0 var(--r) var(--r) 0;
+  padding:14px 18px;margin-bottom:9px;
+  transition:background .15s;position:relative;
+}
+.quote-card:hover{background:var(--s2)}
+.quote-original{font-family:var(--font-display);font-size:16px;font-style:italic;color:var(--text);line-height:1.5;margin-bottom:6px}
+.quote-note{font-size:13px;color:var(--muted2);line-height:1.5}
+.quote-source{font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:7px}
+.quote-del{
+  position:absolute;top:10px;right:10px;
+  background:none;border:none;color:var(--muted);cursor:pointer;
+  font-size:12px;opacity:0;transition:opacity .15s;padding:2px 5px;
+}
+.quote-card:hover .quote-del{opacity:1}
+.quote-del:hover{color:var(--t6)}
+
+/* ═══════════════════════════════════════════════
+   SUBMIT VIEW
+═══════════════════════════════════════════════ */
+#submit-view{display:none}
+.submit-header{margin-bottom:24px}
+.submit-title{font-family:var(--font-display);font-size:26px;font-weight:300;color:var(--text);font-style:italic;margin-bottom:6px}
+.submit-sub{font-size:13px;color:var(--muted);line-height:1.5}
+
+.submit-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+@media(max-width:1100px){.submit-layout{grid-template-columns:1fr}}
+
+.submit-panel{background:var(--s1);border:1px solid var(--border);border-radius:var(--rL);overflow:hidden}
+.panel-head{
+  padding:14px 18px;border-bottom:1px solid var(--border);
+  font-family:var(--font-mono);font-size:11px;letter-spacing:1px;
+  text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.panel-body{padding:18px}
+
+.form-row{margin-bottom:14px}
+.form-label{font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block}
+.form-input,.form-textarea,.form-select{
+  width:100%;background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);color:var(--text);font-family:var(--font-body);
+  font-size:13.5px;padding:8px 12px;outline:none;
+  transition:border-color .2s;resize:vertical;
+}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--accent)}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--muted)}
+.form-textarea{min-height:80px;line-height:1.55}
+.form-textarea.tall{min-height:120px}
+.form-textarea.raw{min-height:160px;font-family:var(--font-mono);font-size:12px}
+.form-select{height:36px;cursor:pointer}
+.form-select option{background:var(--s2)}
+
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+.topic-checkboxes{display:flex;flex-wrap:wrap;gap:7px}
+.topic-check-label{
+  display:flex;align-items:center;gap:5px;cursor:pointer;
+  font-family:var(--font-mono);font-size:11px;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:5px;padding:4px 8px;transition:all .15s;
+  user-select:none;
+}
+.topic-check-label:hover{border-color:var(--border2)}
+.topic-check-label input{display:none}
+.topic-check-label.checked{border-color:var(--check-color);background:var(--check-bg)}
+.topic-check-label .dot{width:6px;height:6px;border-radius:50%;background:var(--check-color,var(--muted))}
+
+.divider-row{border:none;border-top:1px solid var(--border);margin:16px 0}
+
+.btn-primary{
+  background:var(--accent);color:#0a0a0a;border:none;
+  border-radius:var(--r);padding:9px 20px;font-size:14px;
+  font-weight:600;cursor:pointer;font-family:var(--font-body);
+  transition:opacity .2s;width:100%;
+}
+.btn-primary:hover{opacity:.85}
+.btn-secondary{
+  background:var(--s3);border:1px solid var(--border);color:var(--muted2);
+  border-radius:var(--r);padding:8px 16px;font-size:13px;cursor:pointer;
+  font-family:var(--font-body);transition:all .15s;
+}
+.btn-secondary:hover{color:var(--text);border-color:var(--border2)}
+.btn-row{display:flex;gap:10px;margin-top:6px}
+
+.output-code{
+  background:var(--s2);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px;font-family:var(--font-mono);font-size:11px;
+  color:var(--muted2);line-height:1.5;overflow-x:auto;
+  white-space:pre;max-height:280px;overflow-y:auto;
+}
+.output-hidden{display:none}
+.copy-output-btn{
+  margin-top:10px;background:var(--s3);border:1px solid var(--border);
+  color:var(--muted2);border-radius:var(--r);padding:7px 14px;
+  font-size:12px;cursor:pointer;font-family:var(--font-mono);
+  transition:all .15s;
+}
+.copy-output-btn:hover{color:var(--text);border-color:var(--border2)}
+
+/* Raw paste mode */
+.raw-mode-toggle{
+  display:flex;align-items:center;gap:8px;margin-bottom:14px;
+  font-size:13px;color:var(--muted2);cursor:pointer;
+}
+.toggle-switch{
+  width:36px;height:20px;background:var(--s3);border-radius:10px;
+  position:relative;transition:background .2s;cursor:pointer;
+  border:1px solid var(--border);flex-shrink:0;
+}
+.toggle-switch.on{background:var(--accent)}
+.toggle-switch::after{
+  content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;
+  background:#fff;border-radius:50%;transition:left .2s;
+}
+.toggle-switch.on::after{left:18px}
+
+/* ═══════════════════════════════════════════════
+   SETTINGS DRAWER
+═══════════════════════════════════════════════ */
+#settings-overlay{
+  display:none;position:fixed;inset:0;z-index:300;
+}
+#settings-overlay.open{display:block}
+#settings-bg{position:absolute;inset:0}
+#settings-drawer{
+  position:absolute;top:0;right:0;bottom:0;width:300px;
+  background:var(--s1);border-left:1px solid var(--border2);
+  padding:24px 20px;overflow-y:auto;
+  animation:slideIn .25s ease;
+}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+
+.drawer-title{
+  font-family:var(--font-display);font-size:20px;font-weight:600;
+  color:var(--text);margin-bottom:24px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.drawer-close{
+  background:none;border:none;color:var(--muted);cursor:pointer;
+  font-size:18px;transition:color .15s;padding:4px;
+}
+.drawer-close:hover{color:var(--text)}
+
+.setting-group{margin-bottom:24px}
+.setting-label{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:10px;
+}
+
+.theme-swatches{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.theme-swatch{
+  background:var(--s2);border:2px solid var(--border);
+  border-radius:var(--r);padding:10px 12px;cursor:pointer;
+  font-size:12px;color:var(--muted2);transition:all .15s;
+  text-align:center;
+}
+.theme-swatch:hover{border-color:var(--border2);color:var(--text)}
+.theme-swatch.active{border-color:var(--accent);color:var(--accent)}
+
+.accent-swatches{display:flex;gap:8px;flex-wrap:wrap}
+.accent-dot{
+  width:28px;height:28px;border-radius:50%;cursor:pointer;
+  border:2px solid transparent;transition:border-color .15s;
+}
+.accent-dot.active{border-color:var(--text)}
+
+.font-size-row{display:flex;gap:8px}
+.sz-btn{
+  flex:1;background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r);padding:7px 0;cursor:pointer;
+  font-family:var(--font-body);color:var(--muted2);transition:all .15s;
+  text-align:center;
+}
+.sz-btn:hover{color:var(--text);border-color:var(--border2)}
+.sz-btn.active{border-color:var(--accent);color:var(--accent)}
+
+.lh-slider{width:100%;accent-color:var(--accent);cursor:pointer}
+
+.setting-hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4}
+
+/* ═══════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════ */
+#modal-overlay{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+  overflow-y:auto;padding:40px 20px;
+}
+#modal-overlay.open{display:flex;justify-content:center;align-items:flex-start}
+#modal{
+  background:var(--s1);border:1px solid var(--border2);border-radius:var(--rL);
+  width:100%;max-width:860px;overflow:hidden;
+  animation:slideUp .22s ease;margin:auto;position:relative;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.modal-bar{height:3px;background:var(--modal-color,var(--accent))}
+.modal-header{padding:26px 30px 18px;border-bottom:1px solid var(--border)}
+.modal-title{font-family:var(--font-display);font-size:22px;font-weight:600;line-height:1.3;color:var(--text);margin-bottom:9px}
+.modal-meta{font-family:var(--font-mono);font-size:11px;color:var(--muted);display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:10px}
+.modal-topics{display:flex;gap:5px;flex-wrap:wrap}
+.modal-body{padding:22px 30px}
+.modal-close{position:absolute;top:18px;right:18px;background:var(--s3);border:1px solid var(--border);color:var(--muted);border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.modal-close:hover{color:var(--text);border-color:var(--border2)}
+
+/* Modal sections */
+.section-block{margin-bottom:20px}
+.section-label{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:7px;
+  display:flex;align-items:center;gap:7px;
+}
+.section-label::after{content:'';flex:0 0 20px;height:1px;background:var(--border)}
+.section-content{font-size:var(--font-sz);color:var(--text);line-height:var(--line-h)}
+.section-content.serif{font-family:var(--font-display);font-size:calc(var(--font-sz) + 1px)}
+
+.numbered-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+.numbered-list li{display:flex;gap:11px;font-size:calc(var(--font-sz) - 1px);line-height:1.6}
+.numbered-list li::before{content:attr(data-n);font-family:var(--font-mono);font-size:11px;color:var(--accent);flex-shrink:0;margin-top:2px;font-weight:500}
+
+.good-sentence-block{background:var(--s2);border-left:2px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:11px 15px;margin-bottom:8px}
+.gs-original{font-family:var(--font-display);font-style:italic;font-size:calc(var(--font-sz) + 1px);color:var(--text);margin-bottom:5px;line-height:1.5}
+.gs-note{font-size:13px;color:var(--muted2)}
+
+/* Writing highlights section */
+.phrase-grid{display:flex;flex-direction:column;gap:6px}
+.phrase-row{
+  background:var(--s2);border-radius:var(--r);padding:9px 13px;
+  display:flex;gap:14px;align-items:flex-start;
+}
+.phrase-en{font-family:var(--font-display);font-style:italic;font-size:14px;color:var(--text);min-width:260px;line-height:1.4}
+.phrase-note{font-size:12px;color:var(--muted2);line-height:1.4}
+
+.connection-box{background:var(--s2);border:1px solid var(--border2);border-radius:var(--r);padding:13px 15px;font-size:calc(var(--font-sz) - 1px);line-height:1.65}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.mini-section{background:var(--s2);border-radius:var(--r);padding:12px 14px}
+.mini-lbl{font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.mini-content{font-size:13px;color:var(--text);line-height:1.6}
+
+.doi-link{font-family:var(--font-mono);font-size:11px;color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s}
+.doi-link:hover{border-color:var(--accent)}
+
+/* Copy buttons */
+.copy-btn{
+  background:var(--s3);border:1px solid var(--border);color:var(--muted2);
+  border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;
+  font-family:var(--font-mono);transition:all .15s;
+}
+.copy-btn:hover{color:var(--text);border-color:var(--border2)}
+.copy-btn.copied{color:var(--t5);border-color:var(--t5)}
+.cite-block{background:var(--s2);border-radius:var(--r);padding:12px 14px;font-family:var(--font-mono);font-size:11px;color:var(--muted2);line-height:1.6;position:relative}
+.cite-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cite-type{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+
+/* Notes */
+.notes-section{margin-top:20px;padding-top:18px;border-top:1px solid var(--border)}
+.notes-lbl{font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+#modal-notes{width:100%;min-height:90px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font-body);font-size:13px;line-height:1.55;padding:10px 12px;resize:vertical;outline:none;transition:border-color .2s}
+#modal-notes:focus{border-color:var(--accent)}
+.notes-hint{font-size:11px;color:var(--muted);margin-top:5px}
+.annotation-link{display:inline-flex;align-items:center;gap:5px;margin-top:12px;padding:7px 12px;background:var(--s3);border:1px solid var(--border);border-radius:var(--r);font-family:var(--font-mono);font-size:11px;color:var(--muted2);text-decoration:none;transition:all .15s}
+.annotation-link:hover{color:var(--text);border-color:var(--border2)}
+
+/* Sentence add modal */
+#sentence-modal{display:none;position:fixed;inset:0;z-index:250;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px}
+#sentence-modal.open{display:flex}
+.sentence-modal-box{background:var(--s1);border:1px solid var(--border2);border-radius:var(--rL);width:100%;max-width:580px;padding:28px;animation:slideUp .2s ease;position:relative}
+.sentence-modal-title{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text);margin-bottom:20px}
+
+/* Empty state */
+#empty-state{display:none;text-align:center;padding:70px 20px}
+.empty-icon{font-size:44px;margin-bottom:14px;opacity:.35}
+.empty-title{font-family:var(--font-display);font-size:20px;color:var(--muted2);margin-bottom:7px}
+.empty-sub{font-size:13px;color:var(--muted);line-height:1.6}
+.empty-sub code{font-family:var(--font-mono);background:var(--s2);padding:1px 5px;border-radius:4px;color:var(--accent2)}
+
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+#queue-indicator{display:none;align-items:center;gap:6px;font-size:13px;color:var(--muted2);cursor:pointer;padding:4px 8px;border-radius:6px;border:1px solid var(--border)}
+#queue-indicator.active{display:flex}
+#queue-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.2s ease-in-out infinite}
+#queue-panel{display:none;position:absolute;top:54px;right:60px;width:340px;background:var(--s2);border:1px solid var(--border2);border-radius:var(--rL);padding:16px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+#queue-panel.open{display:block}
+.queue-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.queue-item:last-child{border-bottom:none}
+.qi-status{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.qi-status.queued{background:var(--muted)}
+.qi-status.processing{background:var(--accent);animation:pulse 1s infinite}
+.qi-status.done{background:var(--t5)}
+.qi-status.error{background:var(--t6)}
+.qi-url{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted2)}
+@media(max-width:860px){
+  #sidebar{display:none}
+  #cards-grid{grid-template-columns:1fr}
+  #topbar{flex-wrap:wrap;gap:8px;padding:10px 14px}
+  #search-wrap{order:3;width:100%;max-width:100%}
+  .nav-tabs{gap:4px}
+  .nav-btn{padding:5px 10px;font-size:12px}
+  #modal{width:95vw;margin:20px auto;max-height:90vh}
+  .submit-layout{flex-direction:column}
+}
+@media(max-width:480px){
+  .logo{font-size:16px}
+  .logo-sub{display:none}
+  #topbar{padding:8px 10px}
+  #cards-grid{gap:10px;padding:10px}
+  .card{padding:16px}
+}
+</style>
+</head>
+<body class="theme-light">
+
+<!-- ═══ TOP BAR ═══ -->
+<div id="topbar">
+  <div class="logo">Paper Intelligence <span class="logo-sub">学术情报</span></div>
+  <div id="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input id="search" type="text" placeholder="搜索标题、作者、关键词… (⌘K)" oninput="render()">
+  </div>
+  <nav class="nav-tabs">
+    <button class="nav-btn active" id="btn-cards"   onclick="switchView('cards')">论文库</button>
+    <button class="nav-btn"        id="btn-gallery" onclick="switchView('gallery')">好句精选</button>
+    <button class="nav-btn"        id="btn-submit"  onclick="switchView('submit')">投送论文</button>
+  </nav>
+  <div id="queue-indicator" onclick="toggleQueuePanel()" title="分析队列">
+    <span id="queue-dot"></span>
+    <span id="queue-label">0 任务</span>
+  </div>
+  <button class="icon-btn" onclick="openSettings()" title="设置">⚙</button>
+  <div id="queue-panel">
+    <div style="font-weight:600;margin-bottom:10px;font-size:14px">分析队列</div>
+    <div id="queue-list"><span style="color:var(--muted);font-size:13px">暂无任务</span></div>
+  </div>
+</div>
+
+<!-- ═══ LAYOUT ═══ -->
+<div id="layout">
+
+<!-- Sidebar -->
+<div id="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-lbl">研究方向</div>
+    <div class="topic-filter">
+      <button class="topic-btn active" data-topic="ALL" onclick="setTopic('ALL',this)">
+        <span class="topic-dot" style="background:var(--accent)"></span>全部
+        <span class="topic-count" id="cnt-ALL">0</span>
+      </button>
+      <button class="topic-btn" data-topic="T1" onclick="setTopic('T1',this)">
+        <span class="topic-dot" style="background:var(--t1)"></span>LLM Reasoning
+        <span class="topic-count" id="cnt-T1">0</span>
+      </button>
+      <button class="topic-btn" data-topic="T2" onclick="setTopic('T2',this)">
+        <span class="topic-dot" style="background:var(--t2)"></span>Interpretability
+        <span class="topic-count" id="cnt-T2">0</span>
+      </button>
+      <button class="topic-btn" data-topic="T3" onclick="setTopic('T3',this)">
+        <span class="topic-dot" style="background:var(--t3)"></span>Control × LLM
+        <span class="topic-count" id="cnt-T3">0</span>
+      </button>
+      <button class="topic-btn" data-topic="T4" onclick="setTopic('T4',this)">
+        <span class="topic-dot" style="background:var(--t4)"></span>Hallucination & ICL
+        <span class="topic-count" id="cnt-T4">0</span>
+      </button>
+      <button class="topic-btn" data-topic="T5" onclick="setTopic('T5',this)">
+        <span class="topic-dot" style="background:var(--t5)"></span>Autonomous Driving
+        <span class="topic-count" id="cnt-T5">0</span>
+      </button>
+      <button class="topic-btn" data-topic="T6" onclick="setTopic('T6',this)">
+        <span class="topic-dot" style="background:var(--t6)"></span>Robotics Navigation
+        <span class="topic-count" id="cnt-T6">0</span>
+      </button>
+      <button class="topic-btn" data-topic="T7" onclick="setTopic('T7',this)">
+        <span class="topic-dot" style="background:var(--t7)"></span>Manipulation
+        <span class="topic-count" id="cnt-T7">0</span>
+      </button>
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-lbl">排序</div>
+    <div class="sort-group">
+      <button class="sort-btn active" onclick="setSort('date',this)">↓ 最新入库</button>
+      <button class="sort-btn" onclick="setSort('citations',this)">↓ 引用量</button>
+      <button class="sort-btn" onclick="setSort('year',this)">↓ 发表年份</button>
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-lbl">统计</div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-lbl">论文</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-days">0</div><div class="stat-lbl">天数</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-sentences">0</div><div class="stat-lbl">好句</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-noted">0</div><div class="stat-lbl">已笔记</div></div>
+    </div>
+  </div>
+</div><!-- /sidebar -->
+
+<!-- Main -->
+<div id="main">
+
+  <!-- ── Cards View ── -->
+  <div id="cards-view">
+    <div class="results-info" id="results-info"></div>
+    <div id="cards-grid"></div>
+    <div id="empty-state">
+      <div class="empty-icon">📚</div>
+      <div class="empty-title">论文库为空</div>
+      <div class="empty-sub">
+        在 Claude Code 中运行 <code>/paper digest</code> 自动抓取，<br>
+        或点击顶部「投送论文」手动录入，<br>
+        数据写入 <code>papers_data.js</code> 后刷新页面即可。
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Gallery View ── -->
+  <div id="gallery-view">
+    <div class="gallery-header">
+      <div class="gallery-title">好句精选</div>
+      <button class="add-sentence-btn" onclick="openSentenceModal()">
+        <span>+</span> 添加好句
+      </button>
+    </div>
+    <div id="gallery-content"></div>
+  </div>
+
+  <!-- ── Submit View ── -->
+  <div id="submit-view">
+    <div class="submit-header">
+      <div class="submit-title">投送论文</div>
+      <div class="submit-sub">粘贴论文内容或填写结构化表单，生成 papers_data.js 条目代码，复制后追加到数据文件即可在看板中显示。</div>
+    </div>
+
+    <!-- URL 直接分析区块 -->
+    <div id="url-analyze-panel" style="background:var(--s1);border:1px solid var(--border);border-radius:var(--rL);padding:20px;margin-bottom:22px">
+      <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">直接分析论文链接</div>
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <input id="url-input" class="form-input" style="flex:1"
+          placeholder="粘贴论文链接，如 https://openreview.net/pdf?id=... 或 https://arxiv.org/abs/...">
+        <button class="btn-primary" style="width:auto;padding:9px 22px;white-space:nowrap" onclick="analyzeUrl()">生成分析</button>
+      </div>
+      <div id="url-status" style="margin-top:10px;font-size:13px;color:var(--muted);display:none"></div>
+      <div style="margin-top:8px;font-size:12px;color:var(--muted);line-height:1.6">
+        支持：openreview.net · arxiv.org · 任意可公开访问的 PDF 链接<br>
+        生成完成后自动写入 papers_data.js，<strong style="color:var(--muted2)">刷新看板即可看到新论文</strong>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <label class="raw-mode-toggle" onclick="toggleRawMode()">
+        <div class="toggle-switch" id="raw-toggle"></div>
+        <span id="raw-toggle-label">原文粘贴模式（粘贴论文全文/摘要，手动填写下方字段）</span>
+      </label>
+    </div>
+
+    <div id="raw-paste-area" style="display:none;margin-bottom:18px">
+      <div class="form-row">
+        <label class="form-label">粘贴原文内容（全文 / 摘要 / 介绍段落）</label>
+        <textarea class="form-textarea raw" id="raw-text" placeholder="在此粘贴论文原文、摘要或任意段落…&#10;&#10;也可输入 arxiv 链接，复制摘要页内容粘贴即可。"></textarea>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:4px">
+        ↓ 参照上方内容填写结构化字段，或使用 Claude Code <code style="font-size:11px;background:var(--s2);padding:1px 4px;border-radius:3px">/paper read</code> 自动生成。
+      </div>
+    </div>
+
+    <div class="submit-layout">
+      <!-- Left: metadata + annotation fields -->
+      <div>
+        <div class="submit-panel">
+          <div class="panel-head">基础信息</div>
+          <div class="panel-body">
+            <div class="form-row">
+              <label class="form-label">标题</label>
+              <input class="form-input" id="f-title" placeholder="论文完整英文标题">
+            </div>
+            <div class="form-row-2">
+              <div class="form-row">
+                <label class="form-label">第一作者</label>
+                <input class="form-input" id="f-author" placeholder="LastName, F.">
+              </div>
+              <div class="form-row">
+                <label class="form-label">年份</label>
+                <input class="form-input" id="f-year" placeholder="2025" type="number">
+              </div>
+            </div>
+            <div class="form-row-2">
+              <div class="form-row">
+                <label class="form-label">Venue</label>
+                <input class="form-input" id="f-venue" placeholder="NeurIPS / arXiv">
+              </div>
+              <div class="form-row">
+                <label class="form-label">引用量</label>
+                <input class="form-input" id="f-citations" placeholder="0" type="number">
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label">DOI / URL</label>
+              <input class="form-input" id="f-doi" placeholder="https://arxiv.org/abs/...">
+            </div>
+            <div class="form-row">
+              <label class="form-label">研究方向（可多选）</label>
+              <div class="topic-checkboxes" id="topic-checkboxes"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="submit-panel" style="margin-top:14px">
+          <div class="panel-head">批注内容</div>
+          <div class="panel-body">
+            <div class="form-row">
+              <label class="form-label">背景与立意</label>
+              <textarea class="form-textarea" id="f-background" placeholder="研究问题来源、已有方法的不足、本文的核心立意（客观第三人称，2-4句）"></textarea>
+            </div>
+            <div class="form-row">
+              <label class="form-label">摘要提炼（1-2句）</label>
+              <textarea class="form-textarea" id="f-abstract" placeholder="本文提出…，通过…方法解决…问题，在…基准上提升了…。" style="min-height:60px"></textarea>
+            </div>
+            <div class="form-row">
+              <label class="form-label">核心创新点 ①②③（每行一条）</label>
+              <textarea class="form-textarea tall" id="f-innovations" placeholder="① 创新点1&#10;② 创新点2&#10;③ 创新点3"></textarea>
+            </div>
+            <div class="form-row">
+              <label class="form-label">三个 Insight ①②③（每行一条）</label>
+              <textarea class="form-textarea tall" id="f-insights" placeholder="① Insight1&#10;② Insight2&#10;③ Insight3"></textarea>
+            </div>
+            <div class="form-row">
+              <label class="form-label">核心方法论</label>
+              <textarea class="form-textarea tall" id="f-methodology" placeholder="算法层：更新规则、架构选择…&#10;分析层：证明框架、关键引理…（3-5句）"></textarea>
+            </div>
+            <div class="form-row">
+              <label class="form-label">实验结果</label>
+              <textarea class="form-textarea" id="f-results" placeholder="在哪些数据集/基准测试？核心数字？与哪些 baseline 对比？消融实验说明了什么？"></textarea>
+            </div>
+            <div class="form-row">
+              <label class="form-label">与主线的联系</label>
+              <textarea class="form-textarea" id="f-connection" placeholder="T{N} 方向名 — 本文如何连接到研究主线？可直接用/启发/反驳的假设是什么？"></textarea>
+            </div>
+            <div class="form-row">
+              <label class="form-label">好句摘录（格式：原句 | 分析，每行一条）</label>
+              <textarea class="form-textarea tall" id="f-sentences" placeholder='"Despite substantial empirical success, … remains underdeveloped." | 适合写经验成功但理论不足的开场句。&#10;"This renders … redundant and undermines the practical significance of …" | 用于批评某设定现实意义不足。'></textarea>
+            </div>
+            <div class="form-row">
+              <label class="form-label">写作亮点（格式：短语/句型 | 适用场景，每行一条）</label>
+              <textarea class="form-textarea" id="f-phrases" placeholder='"bridge the gap between theory and practice" | 用于描述理论-实践差距&#10;"compare favorably with prior studies" | 实验对比结尾'></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: output -->
+      <div>
+        <div class="submit-panel" style="position:sticky;top:76px">
+          <div class="panel-head">
+            生成预览
+            <span style="font-size:11px;color:var(--muted);font-family:var(--font-body);text-transform:none;letter-spacing:0">填写左侧字段后点击生成</span>
+          </div>
+          <div class="panel-body">
+            <div class="btn-row" style="margin-bottom:14px">
+              <button class="btn-primary" onclick="generateEntry()">生成 JS 条目</button>
+              <button class="btn-secondary" onclick="saveToLocal()">存入看板</button>
+            </div>
+            <div id="output-section" class="output-hidden">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-family:var(--font-mono)">
+                复制下方代码，追加到 <code>papers_data.js</code> 文件末尾
+              </div>
+              <div class="output-code" id="output-code"></div>
+              <button class="copy-output-btn" onclick="copyOutput()">复制代码</button>
+              <div style="height:1px;background:var(--border);margin:16px 0"></div>
+              <div style="font-size:12px;color:var(--muted2);line-height:1.5">
+                或点击「存入看板」直接保存到浏览器本地存储（仅当前浏览器可见，刷新后保留）。<br>
+                如需持久化到 <code style="font-size:11px">papers_data.js</code>，请复制代码手动追加。
+              </div>
+            </div>
+            <div id="output-placeholder" style="text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;line-height:1.6">
+              填写左侧字段后，<br>点击「生成 JS 条目」<br>
+              <span style="font-size:11px;color:var(--muted);font-family:var(--font-mono);display:block;margin-top:8px">至少需要：标题、作者、年份</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /submit-view -->
+
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ═══ MODAL ═══ -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div id="modal">
+    <div class="modal-bar" id="modal-bar"></div>
+    <button class="modal-close" onclick="closeModal(null)">✕</button>
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-meta" id="modal-meta"></div>
+      <div class="modal-topics" id="modal-topics"></div>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- ═══ SELECTION TOOLBAR ═══ -->
+<div id="selection-toolbar" style="display:none;position:fixed;z-index:9999;background:var(--s3);border:1px solid var(--border2);border-radius:8px;padding:6px 10px;box-shadow:0 4px 16px rgba(0,0,0,.3);font-size:13px;gap:8px;align-items:center">
+  <span style="color:var(--muted2)">保存好句</span>
+  <button onclick="saveSelection()" style="background:var(--accent);color:#fff;border:none;border-radius:5px;padding:3px 10px;cursor:pointer;font-size:12px">✓ 保存</button>
+  <button onclick="hideSelectionToolbar()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px">✕</button>
+</div>
+
+<!-- ═══ SENTENCE ADD MODAL ═══ -->
+<div id="sentence-modal">
+  <div class="sentence-modal-box">
+    <button class="modal-close" style="position:absolute;top:16px;right:16px" onclick="closeSentenceModal()">✕</button>
+    <div class="sentence-modal-title">添加好句</div>
+    <div class="form-row">
+      <label class="form-label">原文句子（保持原语言）</label>
+      <textarea class="form-textarea tall" id="s-original" placeholder="粘贴原文句子，不需要完整段落，结构句子亦可。"></textarea>
+    </div>
+    <div class="form-row">
+      <label class="form-label">分析注释</label>
+      <textarea class="form-textarea" id="s-note" placeholder="为什么值得注意？论证方式、表达结构、信息密度、适用场景…" style="min-height:70px"></textarea>
+    </div>
+    <div class="form-row-2">
+      <div class="form-row">
+        <label class="form-label">来源信息</label>
+        <input class="form-input" id="s-source" placeholder="Author, Year · Venue">
+      </div>
+      <div class="form-row">
+        <label class="form-label">主题分类</label>
+        <select class="form-select" id="s-topic">
+          <option value="T1">T1 · LLM Reasoning</option>
+          <option value="T2">T2 · Interpretability</option>
+          <option value="T3">T3 · Control × LLM</option>
+          <option value="T4">T4 · Hallucination & ICL</option>
+          <option value="T5">T5 · Autonomous Driving</option>
+          <option value="T6">T6 · Robotics Navigation</option>
+          <option value="T7">T7 · Manipulation</option>
+          <option value="GENERAL">通用写作句型</option>
+        </select>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:6px">
+      <button class="btn-primary" onclick="saveSentence()">保存好句</button>
+      <button class="btn-secondary" onclick="closeSentenceModal()">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SETTINGS DRAWER ═══ -->
+<div id="settings-overlay">
+  <div id="settings-bg" onclick="closeSettings()"></div>
+  <div id="settings-drawer">
+    <div class="drawer-title">
+      设置
+      <button class="drawer-close" onclick="closeSettings()">✕</button>
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-label">主题</div>
+      <div class="theme-swatches">
+        <div class="theme-swatch active" data-theme="default" onclick="setTheme('default',this)">默认深色</div>
+        <div class="theme-swatch" data-theme="cool" onclick="setTheme('cool',this)">冷蓝深色</div>
+        <div class="theme-swatch" data-theme="warm" onclick="setTheme('warm',this)">暖褐深色</div>
+        <div class="theme-swatch" data-theme="light" onclick="setTheme('light',this)">浅色</div>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-label">强调色</div>
+      <div class="accent-swatches" id="accent-swatches">
+        <div class="accent-dot active" style="background:#c9a96e" data-accent="gold" onclick="setAccent('gold',this)" title="金"></div>
+        <div class="accent-dot" style="background:#5eb0ff" data-accent="blue" onclick="setAccent('blue',this)" title="蓝"></div>
+        <div class="accent-dot" style="background:#34d399" data-accent="green" onclick="setAccent('green',this)" title="绿"></div>
+        <div class="accent-dot" style="background:#b57bee" data-accent="purple" onclick="setAccent('purple',this)" title="紫"></div>
+        <div class="accent-dot" style="background:#f87171" data-accent="red" onclick="setAccent('red',this)" title="红"></div>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-label">字号</div>
+      <div class="font-size-row">
+        <button class="sz-btn" data-sz="13px" onclick="setFontSize('13px',this)">小</button>
+        <button class="sz-btn active" data-sz="15px" onclick="setFontSize('15px',this)">中</button>
+        <button class="sz-btn" data-sz="17px" onclick="setFontSize('17px',this)">大</button>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-label">行间距</div>
+      <input type="range" class="lh-slider" min="1.4" max="2.0" step="0.05" value="1.65" id="lh-slider" oninput="setLineHeight(this.value)">
+      <div class="setting-hint" id="lh-hint">当前: 1.65</div>
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-label">亮度调节</div>
+      <input type="range" class="lh-slider" min="60" max="130" step="5" value="100" id="brightness-slider" oninput="setBrightness(this.value)">
+      <div class="setting-hint" id="brightness-hint">当前: 100%</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DATA ═══ -->
+<script src="papers_data.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════
+const TOPICS = {
+  T1:{name:'LLM Reasoning',       color:'var(--t1)',bg:'var(--t1bg)',hex:'#818cf8'},
+  T2:{name:'Interpretability',    color:'var(--t2)',bg:'var(--t2bg)',hex:'#b57bee'},
+  T3:{name:'Control × LLM',       color:'var(--t3)',bg:'var(--t3bg)',hex:'#38c9f0'},
+  T4:{name:'Hallucination & ICL', color:'var(--t4)',bg:'var(--t4bg)',hex:'#fb923c'},
+  T5:{name:'Autonomous Driving',  color:'var(--t5)',bg:'var(--t5bg)',hex:'#34d399'},
+  T6:{name:'Robotics Navigation', color:'var(--t6)',bg:'var(--t6bg)',hex:'#f87171'},
+  T7:{name:'Manipulation',        color:'var(--t7)',bg:'var(--t7bg)',hex:'#fbbf24'},
+  GENERAL:{name:'通用写作',        color:'var(--muted2)',bg:'var(--s3)',hex:'#7a83a8'},
+};
+const ACCENT_VARS = {
+  gold:  {accent:'#c9a96e',accent2:'#e8c98a',rgb:'201,169,110'},
+  blue:  {accent:'#5eb0ff',accent2:'#8eccff',rgb:'94,176,255'},
+  green: {accent:'#34d399',accent2:'#6ee7b7',rgb:'52,211,153'},
+  purple:{accent:'#b57bee',accent2:'#d4aaff',rgb:'181,123,238'},
+  red:   {accent:'#f87171',accent2:'#fca5a5',rgb:'248,113,113'},
+};
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let papers = typeof PAPERS_DATA !== 'undefined' ? [...PAPERS_DATA] : [];
+let currentTopic = 'ALL', currentSort = 'date', currentView = 'cards';
+let rawMode = false;
+
+// Load localStorage papers
+(function loadLocal(){
+  const saved = localStorage.getItem('pi_local_papers');
+  if(saved){
+    try{
+      const arr = JSON.parse(saved);
+      // merge, avoiding dups
+      const existIds = new Set(papers.map(p=>p.id));
+      arr.forEach(p=>{ if(!existIds.has(p.id)) papers.push(p); });
+    }catch(e){}
+  }
+})();
+
+function saveLocalPapers(){
+  const saved = JSON.parse(localStorage.getItem('pi_local_papers')||'[]');
+  localStorage.setItem('pi_local_papers', JSON.stringify(saved));
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+function init(){
+  buildTopicCheckboxes();
+  applyStoredSettings();
+  updateCounts();
+  updateStats();
+  render();
+  renderGallery();
+  startQueuePolling();
+}
+
+// ═══════════════════════════════════════════════
+// COUNTS + STATS
+// ═══════════════════════════════════════════════
+function updateCounts(){
+  document.getElementById('cnt-ALL').textContent = papers.length;
+  Object.keys(TOPICS).forEach(t=>{
+    const el = document.getElementById('cnt-'+t);
+    if(el) el.textContent = papers.filter(p=>(p.topics||[]).includes(t)).length;
+  });
+}
+function updateStats(){
+  document.getElementById('stat-total').textContent = papers.length;
+  const days = new Set(papers.map(p=>p.date_added)).size;
+  document.getElementById('stat-days').textContent = days;
+  // sentences = from papers + from local sentences
+  const fromPapers = papers.reduce((s,p)=>s+(p.good_sentences||[]).length,0);
+  const fromLocal  = JSON.parse(localStorage.getItem('pi_sentences')||'[]').length;
+  document.getElementById('stat-sentences').textContent = fromPapers + fromLocal;
+  const noted = papers.filter(p=>localStorage.getItem('note_'+p.id)).length;
+  document.getElementById('stat-noted').textContent = noted;
+}
+
+// ═══════════════════════════════════════════════
+// FILTERING + SORTING
+// ═══════════════════════════════════════════════
+function getFiltered(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  let list = papers.filter(p=>{
+    if(currentTopic!=='ALL' && !(p.topics||[]).includes(currentTopic)) return false;
+    if(q){
+      const hay=[p.title,p.authors,p.venue,p.abstract_zh,p.background,p.thesis]
+        .filter(Boolean).join(' ').toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  return [...list].sort((a,b)=>{
+    if(currentSort==='date') return (b.date_added||'').localeCompare(a.date_added||'');
+    if(currentSort==='citations') return (b.citations||0)-(a.citations||0);
+    if(currentSort==='year') return (b.year||0)-(a.year||0);
+    return 0;
+  });
+}
+
+// ═══════════════════════════════════════════════
+// TOPIC TAG HTML
+// ═══════════════════════════════════════════════
+function topicTag(t){
+  const info = TOPICS[t]||{name:t,color:'var(--muted)',bg:'var(--s3)'};
+  return `<span class="topic-tag" style="color:${info.color};background:${info.bg}">${t}·${info.name}</span>`;
+}
+
+// ═══════════════════════════════════════════════
+// RENDER CARDS
+// ═══════════════════════════════════════════════
+function render(){
+  if(currentView!=='cards') return;
+  const list = getFiltered();
+  const grid = document.getElementById('cards-grid');
+  const info = document.getElementById('results-info');
+  const empty = document.getElementById('empty-state');
+  if(papers.length===0){ grid.innerHTML=''; empty.style.display='block'; info.innerHTML=''; return; }
+  empty.style.display='none';
+  const topicName = currentTopic==='ALL'?'全部方向':(TOPICS[currentTopic]||{}).name;
+  info.innerHTML=`显示 <strong>${list.length}</strong> / ${papers.length} 篇 · ${topicName}`;
+  grid.innerHTML = list.map(p=>{
+    const tc = p.topics&&p.topics[0]?(TOPICS[p.topics[0]]||{}).color||'var(--accent)':'var(--accent)';
+    const note = localStorage.getItem('note_'+p.id);
+    const tags = (p.topics||[]).map(topicTag).join('');
+    const abstr = (p.abstract_zh||p.background||'').slice(0,130)+'…';
+    return `<div class="paper-card" style="--topic-color:${tc}" onclick="openModal('${p.id}')">
+      <div class="card-head">
+        <div class="card-badge">${p.badge||'📄'}</div>
+        <div class="card-title">${p.title}</div>
+      </div>
+      <div class="card-meta">
+        <span>${p.authors}</span><span>·</span>
+        <span>${p.year}</span><span>·</span>
+        <span class="card-venue">${p.venue||'arXiv'}</span>
+        ${p.citations?`<span>·</span><span>${(p.citations).toLocaleString()} cit.</span>`:''}
+      </div>
+      <div class="card-abstract">${abstr}</div>
+      <div class="card-topics">${tags}</div>
+      <div class="card-footer">
+        <span class="card-date">${p.date_added||''}</span>
+        ${note?'<span class="card-note-indicator">✏︎ 笔记</span>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// RENDER GALLERY
+// ═══════════════════════════════════════════════
+function renderGallery(){
+  const container = document.getElementById('gallery-content');
+  // Collect from papers
+  const grouped = {};
+  papers.forEach(p=>{
+    (p.good_sentences||[]).forEach(gs=>{
+      const t = (p.topics||['T1'])[0];
+      if(!grouped[t]) grouped[t]=[];
+      grouped[t].push({gs,source:`${p.authors}, ${p.year} · ${p.venue||'arXiv'}`,fromPaper:true,pid:p.id});
+    });
+    // writing phrases
+    (p.writing_phrases||[]).forEach(ph=>{
+      const t = 'GENERAL';
+      if(!grouped[t]) grouped[t]=[];
+      grouped[t].push({gs:{original:ph.phrase,note:ph.note||''},source:`${p.authors}, ${p.year}`,fromPaper:true,pid:p.id});
+    });
+  });
+  // Load local sentences
+  const localSentences = JSON.parse(localStorage.getItem('pi_sentences')||'[]');
+  localSentences.forEach((s,i)=>{
+    const t = s.topic||'GENERAL';
+    if(!grouped[t]) grouped[t]=[];
+    grouped[t].push({gs:{original:s.original,note:s.note},source:s.source||'手动添加',local:true,localIdx:i});
+  });
+
+  const allTopics = [...Object.keys(TOPICS)];
+  let html='';
+  allTopics.forEach(t=>{
+    if(!grouped[t]||!grouped[t].length) return;
+    const info = TOPICS[t]||{name:t,color:'var(--muted)',hex:'#888'};
+    html+=`<div class="gallery-topic-section">
+      <div class="gallery-topic-label">
+        <span class="gallery-topic-name" style="color:${info.color}">${t} · ${info.name}</span>
+        <div class="gallery-divider"></div>
+      </div>
+      ${grouped[t].map((item,i)=>`
+        <div class="quote-card" style="--topic-color:${info.color}">
+          <div class="quote-original">"${escHtml(item.gs.original)}"</div>
+          ${item.gs.note?`<div class="quote-note">${escHtml(item.gs.note)}</div>`:''}
+          <div class="quote-source">— ${escHtml(item.source)}</div>
+          ${item.local?`<button class="quote-del" onclick="deleteLocalSentence(${item.localIdx},event)" title="删除">✕</button>`:''}
+        </div>`).join('')}
+    </div>`;
+  });
+  container.innerHTML = html || `<div style="color:var(--muted);text-align:center;padding:60px">暂无好句，点击右上角「添加好句」手动录入，或运行 /paper digest 自动提取。</div>`;
+}
+
+function deleteLocalSentence(idx, e){
+  e.stopPropagation();
+  const arr = JSON.parse(localStorage.getItem('pi_sentences')||'[]');
+  arr.splice(idx,1);
+  localStorage.setItem('pi_sentences', JSON.stringify(arr));
+  updateStats();
+  renderGallery();
+}
+
+// ═══════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════
+function openModal(id){
+  const p = papers.find(x=>x.id===id);
+  if(!p) return;
+  const tc = p.topics&&p.topics[0]?(TOPICS[p.topics[0]]||{}).color||'var(--accent)':'var(--accent)';
+  document.getElementById('modal-bar').style.background=tc;
+  document.getElementById('modal-title').textContent=p.title;
+  document.getElementById('modal-meta').innerHTML=`
+    <span>${p.authors}</span><span>·</span><span>${p.year}</span>
+    <span>·</span><span style="color:var(--accent)">${p.venue||'arXiv'}</span>
+    ${p.citations?`<span>·</span><span>${p.badge||''} ${p.citations.toLocaleString()} citations</span>`:''}
+    ${p.doi?`<a class="doi-link" href="${p.doi}" target="_blank">DOI ↗</a>`:''}`;
+  document.getElementById('modal-topics').innerHTML=(p.topics||[]).map(topicTag).join('');
+  document.getElementById('modal-body').innerHTML = buildModalBody(p);
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function buildModalBody(p){
+  const apa = buildAPA(p);
+  const bib = buildBibtex(p);
+  currentPaper = p;
+  const selectionHint = `<div id="selection-hint" style="font-size:12px;color:var(--muted);padding:6px 10px;background:var(--s2);border-radius:6px;margin-bottom:14px;border:1px solid var(--border)">💡 在正文中划选文字，可快速保存为好句</div>`;
+  return `
+    ${selectionHint}
+    ${sec('背景与立意', p.background, 'serif')}
+    ${sec('摘要提炼', p.abstract_zh)}
+    ${numSec('核心创新点', p.innovations)}
+    ${numSec('三个 Insight', p.insights)}
+    ${sentSec(p.good_sentences)}
+    ${methodSec(p)}
+    ${sec('实验结果', p.results)}
+    ${phraseSec(p.writing_phrases)}
+    ${connSec(p.connection)}
+    <div class="two-col" style="margin-bottom:20px">
+      <div>
+        <div class="cite-block">
+          <div class="cite-header"><span class="cite-type">APA 7th</span>
+            <button class="copy-btn" onclick="copyText(this,'${escQ(apa)}')">复制</button></div>
+          <div>${escHtml(apa)}</div>
+        </div>
+      </div>
+      <div>
+        <div class="cite-block">
+          <div class="cite-header"><span class="cite-type">BibTeX</span>
+            <button class="copy-btn" onclick="copyText(this,'${escQ(bib)}')">复制</button></div>
+          <div>${escHtml(bib)}</div>
+        </div>
+      </div>
+    </div>
+    <div class="notes-section">
+      <div class="notes-lbl">✏︎ 我的笔记</div>
+      <textarea id="modal-notes" placeholder="在此记录个人思考、与研究的关联、待追踪的后续工作…" oninput="saveNote('${p.id}')">${localStorage.getItem('note_'+p.id)||''}</textarea>
+      <div class="notes-hint">自动保存到本地浏览器</div>
+    </div>
+    ${p.annotation_path?`<a class="annotation-link" href="${p.annotation_path}" target="_blank">📄 打开完整批注 HTML →</a>`:''}`;
+}
+function sec(label, content, cls){
+  if(!content) return '';
+  return `<div class="section-block"><div class="section-label">${label}</div><div class="section-content ${cls||''}">${escHtml(content)}</div></div>`;
+}
+function numSec(label, items){
+  if(!items||!items.length) return '';
+  const syms=['①','②','③','④','⑤','⑥'];
+  const lis = items.map((item,i)=>`<li data-n="${syms[i]||i+1}">${escHtml(item)}</li>`).join('');
+  return `<div class="section-block"><div class="section-label">${label}</div><ul class="numbered-list">${lis}</ul></div>`;
+}
+function sentSec(sentences){
+  if(!sentences||!sentences.length) return '';
+  const cards = sentences.map(gs=>`
+    <div class="good-sentence-block">
+      <div class="gs-original">"${escHtml(gs.original)}"</div>
+      ${gs.note?`<div class="gs-note">${escHtml(gs.note)}</div>`:''}
+    </div>`).join('');
+  return `<div class="section-block"><div class="section-label">好句摘录</div>${cards}</div>`;
+}
+function methodSec(p){
+  if(!p.methodology) return '';
+  // If methodology has \n, try to split into algo + analysis layers
+  const parts = p.methodology.split(/\n(?=分析层|算法层)/);
+  if(parts.length>1){
+    return `<div class="section-block"><div class="section-label">核心方法论</div>
+      <div class="two-col">
+        ${parts.map(pt=>{
+          const lines=pt.split('\n');
+          const lbl=lines[0];const body=lines.slice(1).join('\n');
+          return `<div class="mini-section"><div class="mini-lbl">${escHtml(lbl)}</div><div class="mini-content">${escHtml(body||pt)}</div></div>`;
+        }).join('')}
+      </div></div>`;
+  }
+  return sec('核心方法论', p.methodology);
+}
+function phraseSec(phrases){
+  if(!phrases||!phrases.length) return '';
+  const rows = phrases.map(ph=>`
+    <div class="phrase-row">
+      <div class="phrase-en">"${escHtml(ph.phrase)}"</div>
+      <div class="phrase-note">${escHtml(ph.note||'')}</div>
+    </div>`).join('');
+  return `<div class="section-block"><div class="section-label">写作亮点</div><div class="phrase-grid">${rows}</div></div>`;
+}
+function connSec(text){
+  if(!text) return '';
+  return `<div class="section-block"><div class="section-label">与主线的联系</div><div class="connection-box">${escHtml(text)}</div></div>`;
+}
+function buildAPA(p){
+  return `${p.authors||'Unknown'} (${p.year||'n.d.'}). ${p.title||''}. ${p.venue||''}. ${p.doi||''}`;
+}
+function buildBibtex(p){
+  const key=(p.id||'key').replace(/[^a-zA-Z0-9_-]/g,'');
+  return `@article{${key},\n  author={${p.authors||''}},\n  title={${p.title||''}},\n  year={${p.year||''}},\n  journal={${p.venue||''}},\n  doi={${p.doi||''}}\n}`;
+}
+function closeModal(e){
+  if(e&&e.target!==document.getElementById('modal-overlay')) return;
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow='';
+  updateStats(); render();
+}
+function saveNote(id){
+  const val=document.getElementById('modal-notes').value;
+  if(val.trim()) localStorage.setItem('note_'+id,val);
+  else localStorage.removeItem('note_'+id);
+}
+
+// ═══════════════════════════════════════════════
+// SENTENCE MODAL
+// ═══════════════════════════════════════════════
+function openSentenceModal(){
+  document.getElementById('sentence-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeSentenceModal(){
+  document.getElementById('sentence-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+function saveSentence(){
+  const original=document.getElementById('s-original').value.trim();
+  const note=document.getElementById('s-note').value.trim();
+  const source=document.getElementById('s-source').value.trim();
+  const topic=document.getElementById('s-topic').value;
+  if(!original){ alert('请输入原文句子'); return; }
+  const arr=JSON.parse(localStorage.getItem('pi_sentences')||'[]');
+  arr.push({original,note,source,topic,added:new Date().toISOString().slice(0,10)});
+  localStorage.setItem('pi_sentences',JSON.stringify(arr));
+  ['s-original','s-note','s-source'].forEach(id=>document.getElementById(id).value='');
+  closeSentenceModal();
+  updateStats();
+  renderGallery();
+}
+
+// ═══════════════════════════════════════════════
+// SUBMIT
+// ═══════════════════════════════════════════════
+function buildTopicCheckboxes(){
+  const wrap=document.getElementById('topic-checkboxes');
+  Object.entries(TOPICS).filter(([k])=>k!=='GENERAL').forEach(([k,info])=>{
+    const label=document.createElement('label');
+    label.className='topic-check-label';
+    label.style='--check-color:'+info.hex+';--check-bg:'+info.bg;
+    label.dataset.topic=k;
+    label.innerHTML=`<input type="checkbox" value="${k}" onchange="toggleTopicCheck(this.parentElement)">
+      <span class="dot"></span>${k}`;
+    wrap.appendChild(label);
+  });
+}
+function toggleTopicCheck(label){
+  const checked=label.querySelector('input').checked;
+  label.classList.toggle('checked',checked);
+}
+function getSelectedTopics(){
+  return [...document.querySelectorAll('#topic-checkboxes .checked')].map(l=>l.dataset.topic);
+}
+function toggleRawMode(){
+  rawMode=!rawMode;
+  document.getElementById('raw-toggle').classList.toggle('on',rawMode);
+  document.getElementById('raw-paste-area').style.display=rawMode?'block':'none';
+}
+function generateEntry(){
+  const title=document.getElementById('f-title').value.trim();
+  const author=document.getElementById('f-author').value.trim();
+  const year=parseInt(document.getElementById('f-year').value)||new Date().getFullYear();
+  if(!title||!author){ alert('至少需要填写标题和作者'); return; }
+  const venue=document.getElementById('f-venue').value.trim();
+  const citations=parseInt(document.getElementById('f-citations').value)||0;
+  const doi=document.getElementById('f-doi').value.trim();
+  const topics=getSelectedTopics();
+  const background=document.getElementById('f-background').value.trim();
+  const abstract=document.getElementById('f-abstract').value.trim();
+  const innovRaw=document.getElementById('f-innovations').value.trim();
+  const insightRaw=document.getElementById('f-insights').value.trim();
+  const method=document.getElementById('f-methodology').value.trim();
+  const results=document.getElementById('f-results').value.trim();
+  const connection=document.getElementById('f-connection').value.trim();
+  const sentRaw=document.getElementById('f-sentences').value.trim();
+  const phraseRaw=document.getElementById('f-phrases').value.trim();
+
+  const slug = title.split(' ').slice(0,4).map(w=>w.replace(/[^a-zA-Z]/g,'')).filter(Boolean).join('-').toLowerCase();
+  const id=`${author.split(',')[0].replace(/\s/g,'')}-${year}-${slug}`;
+  const badge=citations>=100?'🔥':citations>=20?'⭐':citations>=5?'✓':'📄';
+  const innovations=innovRaw.split('\n').map(l=>l.replace(/^[①②③④⑤⑥\d.)\-\s]+/,'').trim()).filter(Boolean);
+  const insights=insightRaw.split('\n').map(l=>l.replace(/^[①②③④⑤⑥\d.)\-\s]+/,'').trim()).filter(Boolean);
+  const good_sentences=sentRaw.split('\n').filter(Boolean).map(l=>{
+    const [orig,...rest]=l.split('|');
+    return {original:(orig||'').replace(/^["']/,'').replace(/["']$/,'').trim(),note:(rest.join('|')||'').trim()};
+  }).filter(s=>s.original);
+  const writing_phrases=phraseRaw.split('\n').filter(Boolean).map(l=>{
+    const [ph,...rest]=l.split('|');
+    return {phrase:(ph||'').replace(/^["']/,'').replace(/["']$/,'').trim(),note:(rest.join('|')||'').trim()};
+  }).filter(p=>p.phrase);
+
+  const entry={id,title,authors:`${author} et al.`,year,venue:venue||'arXiv',citations,badge,
+    topics:topics.length?topics:['T1'],date_added:new Date().toISOString().slice(0,10),
+    background,abstract_zh:abstract,innovations,insights,good_sentences,writing_phrases,
+    methodology:method,results,connection,doi,annotation_path:`annotations/${id}.html`};
+
+  const code=`PAPERS_DATA.push(${JSON.stringify(entry,null,2)});`;
+  document.getElementById('output-code').textContent=code;
+  document.getElementById('output-section').classList.remove('output-hidden');
+  document.getElementById('output-placeholder').style.display='none';
+  window._currentEntry=entry;
+}
+function saveToLocal(){
+  if(!window._currentEntry){ generateEntry(); if(!window._currentEntry) return; }
+  const arr=JSON.parse(localStorage.getItem('pi_local_papers')||'[]');
+  const existIds=new Set(arr.map(p=>p.id));
+  if(!existIds.has(window._currentEntry.id)){
+    arr.push(window._currentEntry);
+    localStorage.setItem('pi_local_papers',JSON.stringify(arr));
+    papers.push(window._currentEntry);
+    updateCounts(); updateStats(); render(); renderGallery();
+    alert(`✓ 已保存到看板：${window._currentEntry.title}\n\n注意：刷新页面后此条目将保留（来自本地存储）。如需持久写入 papers_data.js，请复制代码手动追加。`);
+  } else {
+    alert('该条目 ID 已存在，跳过');
+  }
+}
+function copyOutput(){
+  const code=document.getElementById('output-code').textContent;
+  navigator.clipboard.writeText(code).then(()=>{
+    const btn=document.querySelector('.copy-output-btn');
+    btn.textContent='✓ 已复制';btn.style.color='var(--t5)';
+    setTimeout(()=>{btn.textContent='复制代码';btn.style.color='';},1600);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════
+function openSettings(){ document.getElementById('settings-overlay').classList.add('open') }
+function closeSettings(){ document.getElementById('settings-overlay').classList.remove('open') }
+function setTheme(t, el){
+  document.body.className=document.body.className.replace(/theme-\S+/g,'').trim();
+  if(t!=='default') document.body.classList.add('theme-'+t);
+  document.querySelectorAll('.theme-swatch').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+  localStorage.setItem('pi_theme',t);
+}
+function setAccent(name, el){
+  const vars=ACCENT_VARS[name];if(!vars) return;
+  const root=document.documentElement;
+  root.style.setProperty('--accent',vars.accent);
+  root.style.setProperty('--accent2',vars.accent2);
+  root.style.setProperty('--accent-rgb',vars.rgb);
+  document.querySelectorAll('.accent-dot').forEach(d=>d.classList.remove('active'));
+  el.classList.add('active');
+  localStorage.setItem('pi_accent',name);
+}
+function setFontSize(sz, el){
+  document.documentElement.style.setProperty('--font-sz',sz);
+  document.querySelectorAll('.sz-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  localStorage.setItem('pi_fontsize',sz);
+}
+function setLineHeight(v){
+  document.documentElement.style.setProperty('--line-h',v);
+  document.getElementById('lh-hint').textContent='当前: '+v;
+  localStorage.setItem('pi_lineheight',v);
+}
+function setBrightness(v){
+  document.body.style.filter=v===100?'none':`brightness(${v}%)`;
+  document.getElementById('brightness-hint').textContent='当前: '+v+'%';
+  localStorage.setItem('pi_brightness',v);
+}
+function applyStoredSettings(){
+  if (!localStorage.getItem('pi_theme')) localStorage.setItem('pi_theme', 'light');
+  const theme=localStorage.getItem('pi_theme');
+  if(theme&&theme!=='default'){ document.body.classList.add('theme-'+theme);
+    const el=document.querySelector(`.theme-swatch[data-theme="${theme}"]`);
+    if(el){document.querySelectorAll('.theme-swatch').forEach(s=>s.classList.remove('active'));el.classList.add('active');}
+  }
+  const accent=localStorage.getItem('pi_accent');
+  if(accent){ const el=document.querySelector(`.accent-dot[data-accent="${accent}"]`); if(el) setAccent(accent,el); }
+  const sz=localStorage.getItem('pi_fontsize');
+  if(sz){ document.documentElement.style.setProperty('--font-sz',sz);
+    const el=document.querySelector(`.sz-btn[data-sz="${sz}"]`);
+    if(el){document.querySelectorAll('.sz-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+  }
+  const lh=localStorage.getItem('pi_lineheight');
+  if(lh){ document.getElementById('lh-slider').value=lh; setLineHeight(lh); }
+  const br=localStorage.getItem('pi_brightness');
+  if(br){ document.getElementById('brightness-slider').value=br; setBrightness(br); }
+}
+
+// ═══════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════
+function switchView(v){
+  currentView=v;
+  ['cards','gallery','submit'].forEach(n=>{
+    document.getElementById(n+'-view').style.display=n===v?'block':'none';
+    document.getElementById('btn-'+n).classList.toggle('active',n===v);
+  });
+  // sidebar only useful for cards view
+  document.getElementById('sidebar').style.display=v==='cards'?'':'none';
+  if(v==='gallery') renderGallery();
+}
+function setTopic(t,el){
+  currentTopic=t;
+  document.querySelectorAll('.topic-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active'); render();
+}
+function setSort(s,el){
+  currentSort=s;
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active'); render();
+}
+
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+function escHtml(str){ return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+function escQ(str){ return (str||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'") }
+function copyText(btn,text){
+  navigator.clipboard.writeText(text);
+  const lbl=btn.textContent; btn.textContent='✓'; btn.classList.add('copied');
+  setTimeout(()=>{btn.textContent=lbl;btn.classList.remove('copied')},1500);
+}
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ closeModal(null); closeSentenceModal(); closeSettings(); }
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){ e.preventDefault(); document.getElementById('search').focus(); }
+});
+
+let currentPaper = null;
+let currentSelection = '';
+
+document.addEventListener('mouseup', ()=>{
+  const sel = window.getSelection();
+  if(!sel || sel.rangeCount===0 || !sel.toString().trim()) {
+    hideSelectionToolbar();
+    return;
+  }
+  const text = sel.toString().trim();
+  if(text.length < 10) { hideSelectionToolbar(); return; }
+  // Only show toolbar if selection is inside modal-body
+  const range = sel.getRangeAt(0);
+  const modalBody = document.getElementById('modal-body');
+  if(!modalBody || !modalBody.contains(range.commonAncestorContainer)) {
+    hideSelectionToolbar();
+    return;
+  }
+  currentSelection = text;
+  const rect = range.getBoundingClientRect();
+  const toolbar = document.getElementById('selection-toolbar');
+  toolbar.style.display = 'flex';
+  toolbar.style.left = Math.max(8, rect.left + rect.width/2 - 80) + 'px';
+  toolbar.style.top = (rect.top + window.scrollY - 48) + 'px';
+});
+
+function hideSelectionToolbar(){
+  const toolbar = document.getElementById('selection-toolbar');
+  if(toolbar) toolbar.style.display = 'none';
+  currentSelection = '';
+}
+
+function saveSelection(){
+  if(!currentSelection) return;
+  const arr = JSON.parse(localStorage.getItem('pi_sentences')||'[]');
+  arr.push({
+    original: currentSelection,
+    note: '',
+    source: currentPaper ? currentPaper.title : '',
+    topic: (currentPaper && currentPaper.topics && currentPaper.topics[0]) || '',
+    added: new Date().toISOString().slice(0,10)
+  });
+  localStorage.setItem('pi_sentences', JSON.stringify(arr));
+  hideSelectionToolbar();
+  window.getSelection().removeAllRanges();
+  updateStats();
+  // Brief visual feedback
+  const hint = document.getElementById('selection-hint');
+  if(hint){ const orig=hint.textContent; hint.textContent='✓ 好句已保存！'; setTimeout(()=>hint.textContent=orig,1500); }
+}
+
+function startQueuePolling(){
+  function poll(){
+    fetch('/api/queue').then(r=>r.json()).then(queue=>{
+      const active=queue.filter(j=>j.status==='queued'||j.status==='processing');
+      const ind=document.getElementById('queue-indicator');
+      const lbl=document.getElementById('queue-label');
+      if(active.length>0){
+        ind.classList.add('active');
+        lbl.textContent=active.length+' 任务';
+      } else {
+        ind.classList.remove('active');
+      }
+      renderQueuePanel(queue);
+      // Auto-reload if a job just finished
+      if(queue.some(j=>j.status==='done')){
+        const lastDone=queue.filter(j=>j.status==='done').pop();
+        const key='seen_'+lastDone.id;
+        if(!sessionStorage.getItem(key)){
+          sessionStorage.setItem(key,'1');
+          setTimeout(()=>location.reload(),2000);
+        }
+      }
+    }).catch(()=>{});
+  }
+  poll();
+  setInterval(poll,5000);
+}
+function toggleQueuePanel(){
+  document.getElementById('queue-panel').classList.toggle('open');
+}
+function renderQueuePanel(queue){
+  const el=document.getElementById('queue-list');
+  if(!queue||queue.length===0){
+    el.innerHTML='<span style="color:var(--muted);font-size:13px">暂无任务</span>';
+    return;
+  }
+  const statusLabel={queued:'等待中',processing:'处理中',done:'完成',error:'出错'};
+  el.innerHTML=queue.slice(-10).reverse().map(j=>`
+    <div class="queue-item">
+      <span class="qi-status ${j.status}"></span>
+      <span class="qi-url" title="${j.url}">${j.url.replace(/^https?:\/\//,'')}</span>
+      <span style="font-size:11px;color:var(--muted);flex-shrink:0">${statusLabel[j.status]||j.status}</span>
+    </div>`).join('');
+}
+
+function analyzeUrl() {
+  const url = document.getElementById('url-input').value.trim();
+  if (!url) { alert('请输入论文链接'); return; }
+  const status = document.getElementById('url-status');
+  status.style.display = 'block';
+  status.style.color = 'var(--accent)';
+  status.textContent = '⏳ 正在提交分析任务，Claude Code 处理中（通常需要 30–90 秒）…';
+  fetch('/api/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url })
+  })
+  .then(r => r.json())
+  .then(() => {
+    status.textContent = '✓ 任务已提交。分析完成后请刷新看板（F5）查看新论文。';
+    status.style.color = 'var(--t5)';
+    document.getElementById('url-input').value = '';
+    // 30秒后自动尝试刷新数据
+    setTimeout(() => {
+      status.textContent = '⟳ 正在检查是否有新论文…（如未出现请再等待后手动刷新）';
+      location.reload();
+    }, 45000);
+  })
+  .catch(() => {
+    status.style.color = 'var(--t6)';
+    status.textContent = '⚠ 无法连接本地服务器。请确认已运行 python3 /home/ctx/papers/server.py（而非普通 http.server）';
+  });
+}
+
+init();
+</script>
+</body>
+</html>

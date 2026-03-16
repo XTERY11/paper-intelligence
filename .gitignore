@@ -1,0 +1,9 @@
+_system/
+*.log
+*.bak
+server.py
+digest.log
+server.log
+email_config.py
+__pycache__/
+*.pyc
