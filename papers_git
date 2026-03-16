@@ -1,0 +1,7 @@
+
+# papers git push
+
+cd /home/ctx/papers
+git add .gitignore daily_run.sh send_digest_email.py email_preview.html
+git commit -m "fix: update configs and scripts"
+git push origin main
