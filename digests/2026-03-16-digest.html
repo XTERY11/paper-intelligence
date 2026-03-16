@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper Digest — 2026-03-16</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3350;
+    --text: #e2e4f0;
+    --text-muted: #7a809e;
+    --accent: #6c8ef5;
+    --accent2: #a78bfa;
+    --T1: #fbbf24; --T1bg: #2d2410;
+    --T2: #34d399; --T2bg: #0d2820;
+    --T3: #f87171; --T3bg: #2d1010;
+    --T4: #60a5fa; --T4bg: #101e2d;
+    --T5: #fb923c; --T5bg: #2d1a08;
+    --T6: #a78bfa; --T6bg: #1e1230;
+    --T7: #f472b6; --T7bg: #2d0f20;
+    --hl-thesis: #fef08a33;
+    --hl-concept: #fecaca33;
+    --hl-evidence: #bfdbfe33;
+    --hl-method: #e9d5ff33;
+    --hl-concession: #bbf7d033;
+    --fire: #ff6b35;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 15px;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Header ── */
+  .page-header {
+    background: linear-gradient(135deg, #12152a 0%, #1a1d2e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px 24px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .page-header h1 {
+    font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em;
+    color: #fff; margin-bottom: 4px;
+  }
+  .page-header .meta { color: var(--text-muted); font-size: 0.85rem; }
+  .stats-row {
+    display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap;
+  }
+  .stat-chip {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 0.8rem; color: var(--text-muted);
+  }
+  .stat-chip span { color: var(--text); font-weight: 600; }
+
+  /* ── Topic badges ── */
+  .topic-badge {
+    display: inline-block; border-radius: 4px;
+    padding: 1px 7px; font-size: 0.72rem; font-weight: 700;
+    margin-right: 4px; vertical-align: middle;
+  }
+  .t1 { background: var(--T1bg); color: var(--T1); border: 1px solid var(--T1); }
+  .t2 { background: var(--T2bg); color: var(--T2); border: 1px solid var(--T2); }
+  .t3 { background: var(--T3bg); color: var(--T3); border: 1px solid var(--T3); }
+  .t4 { background: var(--T4bg); color: var(--T4); border: 1px solid var(--T4); }
+  .t5 { background: var(--T5bg); color: var(--T5); border: 1px solid var(--T5); }
+  .t6 { background: var(--T6bg); color: var(--T6); border: 1px solid var(--T6); }
+  .t7 { background: var(--T7bg); color: var(--T7); border: 1px solid var(--T7); }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 22px; margin: 28px 40px 0;
+    max-width: 900px;
+  }
+  .toc h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 12px; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin-bottom: 6px; font-size: 0.9rem; }
+  .toc .toc-venue { color: var(--text-muted); font-size: 0.8rem; margin-left: 6px; }
+
+  /* ── Paper cards ── */
+  .papers-container { padding: 28px 40px 60px; max-width: 980px; }
+  .paper-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; margin-bottom: 32px; overflow: hidden;
+  }
+  .paper-card:hover { border-color: var(--accent); }
+
+  .card-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-num {
+    font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .card-title {
+    font-size: 1.08rem; font-weight: 700; line-height: 1.35;
+    color: #fff; margin-bottom: 10px;
+  }
+  .card-meta-row {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    font-size: 0.82rem; color: var(--text-muted);
+  }
+  .badge-pill {
+    font-size: 0.88rem;
+  }
+  .card-id {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem; color: var(--text-muted);
+    background: var(--surface2); padding: 2px 8px; border-radius: 4px;
+  }
+
+  /* sections */
+  .card-body { padding: 0 24px; }
+  .section {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section:last-child { border-bottom: none; }
+  .section-label {
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-muted); font-weight: 700; margin-bottom: 8px;
+  }
+  .section-content { font-size: 0.9rem; color: #c8cce0; line-height: 1.7; }
+
+  /* abstract highlight */
+  .abstract-box {
+    background: var(--surface2); border-left: 3px solid var(--accent);
+    border-radius: 6px; padding: 12px 16px;
+    font-size: 0.92rem; color: var(--text); line-height: 1.65;
+  }
+
+  /* innovations */
+  .inno-list { list-style: none; padding: 0; }
+  .inno-list li {
+    padding: 8px 0 8px 20px; position: relative;
+    font-size: 0.9rem; color: #c8cce0; line-height: 1.6;
+    border-bottom: 1px solid var(--border);
+  }
+  .inno-list li:last-child { border-bottom: none; }
+  .inno-list li::before {
+    content: attr(data-n); position: absolute; left: 0;
+    font-weight: 700; color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+  }
+
+  /* insights */
+  .insight-list { list-style: none; padding: 0; }
+  .insight-list li {
+    padding: 10px 0 10px 24px; position: relative;
+    font-size: 0.9rem; color: #c8cce0; line-height: 1.65;
+    border-bottom: 1px solid var(--border);
+  }
+  .insight-list li:last-child { border-bottom: none; }
+  .insight-list li::before {
+    content: "◈"; position: absolute; left: 0;
+    color: var(--accent2); font-size: 0.85rem; top: 12px;
+  }
+
+  /* good sentences */
+  .gs-block {
+    background: var(--surface2); border-radius: 8px;
+    padding: 12px 16px; margin-bottom: 10px;
+  }
+  .gs-orig {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.82rem; color: #93c5fd; line-height: 1.5;
+    border-left: 2px solid var(--T4); padding-left: 10px;
+    margin-bottom: 8px; font-style: italic;
+  }
+  .gs-note { font-size: 0.85rem; color: var(--text-muted); }
+
+  /* writing phrases */
+  .phrase-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .phrase-table tr { border-bottom: 1px solid var(--border); }
+  .phrase-table tr:last-child { border-bottom: none; }
+  .phrase-table td { padding: 7px 8px; }
+  .phrase-table td:first-child {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--accent); white-space: nowrap; width: 38%;
+  }
+  .phrase-table td:last-child { color: var(--text-muted); }
+
+  /* methodology / results / connection */
+  .mono-block {
+    background: var(--surface2); border-radius: 6px;
+    padding: 12px 16px; font-size: 0.87rem; line-height: 1.65;
+    color: #c8cce0; white-space: pre-wrap;
+    font-family: inherit;
+  }
+
+  /* tags in connection */
+  .conn-tag {
+    display: inline-block; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 2px 8px; font-size: 0.78rem; color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace; margin-right: 4px;
+  }
+
+  /* doi */
+  .doi-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+  }
+
+  /* highlights box */
+  .highlights-box {
+    background: linear-gradient(135deg, #1a1d2e 0%, #12162a 100%);
+    border: 1px solid #2e3560; border-radius: 10px;
+    padding: 20px 26px; margin: 28px 40px;
+    max-width: 900px;
+  }
+  .highlights-box h3 {
+    font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-muted); margin-bottom: 14px;
+  }
+  .hl-item {
+    display: flex; gap: 12px; margin-bottom: 10px;
+    align-items: flex-start;
+  }
+  .hl-tag { flex-shrink: 0; }
+  .hl-desc { font-size: 0.88rem; color: #c8cce0; line-height: 1.55; }
+
+  /* footer */
+  .page-footer {
+    border-top: 1px solid var(--border);
+    padding: 20px 40px;
+    color: var(--text-muted); font-size: 0.82rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .back-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 16px;
+    color: var(--text); font-size: 0.85rem; cursor: pointer;
+    display: inline-block;
+  }
+  .back-btn:hover { border-color: var(--accent); }
+
+  @media (max-width: 700px) {
+    .page-header { padding: 18px 20px 14px; }
+    .papers-container { padding: 18px 20px 40px; }
+    .toc { margin: 20px 20px 0; }
+    .highlights-box { margin: 20px; }
+    .page-footer { padding: 16px 20px; flex-direction: column; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ PAGE HEADER ═══════════════════════ -->
+<header class="page-header">
+  <h1>📰 Paper Digest — 2026-03-16</h1>
+  <div class="meta">arXiv · cs.AI / cs.LG / cs.CL / cs.RO / cs.CV · 批注语言：中文</div>
+  <div class="stats-row">
+    <div class="stat-chip">抓取 <span>30</span> 篇</div>
+    <div class="stat-chip">精选 <span>5</span> 篇</div>
+    <div class="stat-chip">来源 <span>arXiv</span></div>
+    <div class="stat-chip"><span class="topic-badge t1">T1</span> ×2</div>
+    <div class="stat-chip"><span class="topic-badge t2">T2</span> ×1</div>
+    <div class="stat-chip"><span class="topic-badge t3">T3</span>+<span class="topic-badge t6">T6</span> ×1</div>
+    <div class="stat-chip"><span class="topic-badge t4">T4</span> ×1</div>
+    <div class="stat-chip">写入 <span>papers_data.js</span> (+5 条)</div>
+  </div>
+</header>
+
+<!-- ═══════════════════════ TODAY'S HIGHLIGHTS ═══════════════════════ -->
+<div class="highlights-box">
+  <h3>今日亮点</h3>
+  <div class="hl-item">
+    <div class="hl-tag"><span class="topic-badge t1">T1</span> ×2</div>
+    <div class="hl-desc"><strong>BiCC/GRPO</strong>（训练效率改进，无需额外采样）+ <strong>CRYSTAL</strong>（推理评测方法论，揭示 cherry-picking 现象，Causal Process Reward +32% Match F1）</div>
+  </div>
+  <div class="hl-item">
+    <div class="hl-tag"><span class="topic-badge t3">T3</span><span class="topic-badge t6">T6</span></div>
+    <div class="hl-desc"><strong>FECBF</strong> 解决多UAV稠密场景下的CBF-QP可行性失效问题，引入sign-consistency约束 + 松弛变量，含实飞验证</div>
+  </div>
+  <div class="hl-item">
+    <div class="hl-tag"><span class="topic-badge t4">T4</span></div>
+    <div class="hl-desc"><strong>ESG-Bench</strong>（AAAI 2026），首个长上下文专业文档幻觉细粒度评测基准，CoT 抑制幻觉效果可跨域迁移</div>
+  </div>
+  <div class="hl-item">
+    <div class="hl-tag"><span class="topic-badge t2">T2</span></div>
+    <div class="hl-desc"><strong>f-CBM</strong> 引入可微分泄漏损失 + KAN预测头，三维度（准确率×概念检测×泄漏抑制）帕累托最优</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ TABLE OF CONTENTS ═══════════════════════ -->
+<div class="toc">
+  <h3>目录</h3>
+  <ol>
+    <li>
+      <a href="#paper-1">When Right Meets Wrong: Bilateral Context Conditioning with Reward-Confidence Correction for GRPO</a>
+      <span class="toc-venue">arXiv · 2026</span>
+      <span class="topic-badge t1">T1</span>
+    </li>
+    <li>
+      <a href="#paper-2">Beyond Final Answers: CRYSTAL Benchmark for Transparent Multimodal Reasoning Evaluation</a>
+      <span class="toc-venue">arXiv · 2026</span>
+      <span class="topic-badge t1">T1</span>
+    </li>
+    <li>
+      <a href="#paper-3">ESG-Bench: Benchmarking Long-Context ESG Reports for Hallucination Mitigation</a>
+      <span class="toc-venue">AAAI 2026</span>
+      <span class="topic-badge t4">T4</span>
+    </li>
+    <li>
+      <a href="#paper-4">Towards Faithful Multimodal Concept Bottleneck Models</a>
+      <span class="toc-venue">arXiv · 2026</span>
+      <span class="topic-badge t2">T2</span>
+    </li>
+    <li>
+      <a href="#paper-5">A Feasibility-Enhanced Control Barrier Function Method for Multi-UAV Collision Avoidance</a>
+      <span class="toc-venue">arXiv · 2026</span>
+      <span class="topic-badge t3">T3</span><span class="topic-badge t6">T6</span>
+    </li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════ PAPER CARDS ═══════════════════════ -->
+<div class="papers-container">
+
+<!-- ── Paper 1 ── -->
+<div class="paper-card" id="paper-1">
+  <div class="card-header">
+    <div class="card-num">01 / 05</div>
+    <div class="card-title">When Right Meets Wrong: Bilateral Context Conditioning with Reward-Confidence Correction for GRPO</div>
+    <div class="card-meta-row">
+      <span>Yu Li, Tian Lan, Zhengling Qi</span>
+      <span>·</span>
+      <span>arXiv 2026</span>
+      <span>·</span>
+      <span class="badge-pill">📄</span>
+      <span class="topic-badge t1">T1 LLM Reasoning</span>
+      <span class="card-id">Li-2026-bicc-grpo-reasoning</span>
+      <a href="https://doi.org/10.48550/arXiv.2603.13134" class="doi-link" target="_blank">arXiv:2603.13134</a>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <div class="section">
+      <div class="section-label">摘要提炼</div>
+      <div class="abstract-box">
+        本文在GRPO框架基础上提出BiCC和RCC两个机制，分别通过跨正/负样本信息流和奖励-置信度协方差调整优势基准，在多个数学推理基准上实现一致性提升，且无需额外采样或辅助模型。
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">背景与立意</div>
+      <div class="section-content">
+        大语言模型的推理能力训练广泛采用基于强化学习的方法，Group Relative Policy Optimization（GRPO）是代表性算法，通过对同一提示的多个采样输出进行相对优势估计来更新策略。然而，GRPO标准实现对每个样本独立计算优势函数，无法直接利用同批次正确样本与错误样本之间的对比信息。此外，奖励信号稀疏或模型置信度与奖励不匹配时，训练不稳定问题较为突出。本文在保持GRPO框架不变的前提下，通过双边上下文条件机制（BiCC）和奖励-置信度修正机制（RCC），在数学推理基准上给出了更稳定、更有效的训练改进。
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">核心创新点</div>
+      <ul class="inno-list">
+        <li data-n="①">BiCC机制使模型在优化过程中直接获取同批次正确与错误推理轨迹的对比信息，将GRPO的组内相对比较从隐式转变为显式（通过上下文条件化直接体现）。</li>
+        <li data-n="②">理论分析揭示GRPO目标函数隐式地最大化正确与错误输出策略比之间的间距（margin），BiCC的设计与这一理论性质在机制上相一致。</li>
+        <li data-n="③">RCC通过计算奖励与置信度的协方差来修正优势基准，无需引入额外模型或修改采样流程，即可稳定训练动态。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-label">三个 Insight</div>
+      <ul class="insight-list">
+        <li>GRPO等推理训练方法的样本效率受限于同批次样本间的信息隔离；BiCC类跨样本信息流设计指向一类可普遍化的改进方向：在不增加采样成本的前提下提升批次内信息利用率。</li>
+        <li>奖励信号与模型置信度之间的不对齐是训练不稳定的一个可追踪来源；RCC提供了通过统计量（协方差）将两者解耦的具体途径，这一思路对其他基于奖励的训练方法也可能适用。</li>
+        <li>"无侵入式"设计原则（对GRPO所有变体兼容且不增加推理开销）对需要在已有训练流程上叠加改进的研究具有参考价值。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-label">好句摘录</div>
+      <div class="gs-block">
+        <div class="gs-orig">"GRPO objectives implicitly maximize margins between policy ratios of correct and incorrect outputs"</div>
+        <div class="gs-note">以"implicitly"一词点明原方法的隐式机制，并为BiCC的显式化设计提供理论锚点，是从理论分析过渡到方法设计的典型连接句。</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">写作亮点</div>
+      <table class="phrase-table">
+        <tr><td>bilateral context conditioning</td><td>双边/双向条件化，强调正负样本的对称处理</td></tr>
+        <tr><td>reward-confidence covariance</td><td>将两个独立信号的联合统计量作为调整依据，表述精确</td></tr>
+        <tr><td>no additional sampling or auxiliary models</td><td>明确列举"不增加"的约束，定位方法的轻量化特性</td></tr>
+        <tr><td>consistent improvements</td><td>强调跨基准的稳定性而非单点最优，适合方法论贡献的表达</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-label">核心方法论</div>
+      <div class="mono-block">算法层：在GRPO标准批次采样基础上，BiCC将同批次正确推理轨迹（高奖励样本）与错误轨迹（低奖励样本）拼接为条件上下文，注入当前样本的优势计算中；RCC基于当前批次奖励-置信度协方差调整优势基准，取代纯奖励均值基准。两个机制均在反向传播之前作用于优势估计阶段，无需修改采样流程。
+
+分析层：理论上GRPO目标可被重写为正确与错误样本策略比间隔的最大化问题；BiCC的上下文条件化使该间隔的优化更直接；RCC的协方差修正抑制了奖励-置信度不对齐引起的梯度方差。</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">实验结果</div>
+      <div class="section-content">BiCC+RCC组合在多个数学推理基准上相对GRPO基线实现一致性提升，改进幅度在各基准间稳定。消融实验验证BiCC与RCC单独使用均有效，组合使用效果更优，证明两个机制的互补性。</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">与主线的联系</div>
+      <div class="section-content">
+        <span class="conn-tag">T1 LLM Reasoning</span><br><br>
+        本文直接推进T1方向中推理模型训练方法的研究边界，关注GRPO优化过程的信息利用效率与稳定性。BiCC的跨样本信息流设计与chain-of-thought批次训练中的对比学习思路相通，可作为推理模型训练流程改进的参考模块。后续可追踪：将BiCC扩展到代码生成和逻辑推理任务；以及分析BiCC在不同奖励信号密度条件下的适用范围。
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Paper 2 ── -->
+<div class="paper-card" id="paper-2">
+  <div class="card-header">
+    <div class="card-num">02 / 05</div>
+    <div class="card-title">Beyond Final Answers: CRYSTAL Benchmark for Transparent Multimodal Reasoning Evaluation</div>
+    <div class="card-meta-row">
+      <span>Wayner Barrios, SouYoung Jin</span>
+      <span>·</span>
+      <span>arXiv 2026</span>
+      <span>·</span>
+      <span class="badge-pill">📄</span>
+      <span class="topic-badge t1">T1 LLM Reasoning</span>
+      <span class="card-id">Barrios-2026-crystal-reasoning</span>
+      <a href="https://doi.org/10.48550/arXiv.2603.13099" class="doi-link" target="_blank">arXiv:2603.13099</a>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <div class="section">
+      <div class="section-label">摘要提炼</div>
+      <div class="abstract-box">
+        本文提出CRYSTAL基准（6,372个实例），通过Match F1和Ordered Match F1两个步骤级指标评估多模态模型的推理过程质量，对20个多模态大语言模型的评估揭示了"universal cherry-picking"等系统性推理缺陷，并提出Causal Process Reward训练方法，在Match F1上实现+32%提升。
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">背景与立意</div>
+      <div class="section-content">
+        多模态大语言模型的推理能力评测长期依赖最终答案准确率，忽略了推理过程的正确性和步骤顺序的合理性。这类"黑盒"评测无法区分"答案正确但推理错误"与"推理过程正确"两种情形，也无法检测模型在推理步骤上的系统性缺陷（如步骤乱序、选择性使用便于得分的中间步骤）。本文在多模态推理这一设定下，构建首个通过可验证中间步骤评估推理透明度的基准，并提出量化推理步骤质量和顺序的新指标。
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">核心创新点</div>
+      <ul class="inno-list">
+        <li data-n="①">提出以可验证中间步骤为核心的多模态推理评测框架，与仅测最终答案的传统评测形成方法论对照，为"推理质量"提供了可操作的量化定义。</li>
+        <li data-n="②">设计Match F1和Ordered Match F1两个互补指标，分别衡量步骤覆盖率和步骤顺序正确性，并通过Delphi式流程结合人工验证生成参考推理步骤。</li>
+        <li data-n="③">在20个多模态模型上系统性揭示"universal cherry-picking"（选择性匹配有利步骤）和"disordered reasoning"（步骤乱序）两类用精度指标无法检测的系统性失败模式。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-label">三个 Insight</div>
+      <ul class="insight-list">
+        <li>准确率评测与推理质量评测之间存在结构性不一致：模型可以通过选择性推理在最终答案准确率上表现良好，而实际推理过程存在严重缺陷。这一"非单调缩放权衡"提示对现有推理能力排行榜的解读需要保持谨慎。</li>
+        <li>步骤顺序是推理质量的独立维度：Ordered Match F1相对Match F1可以揭示额外的模型差异，说明"做对每一步"与"按正确顺序推理"是两个需要分别测量的能力。</li>
+        <li>Causal Process Reward训练方法（+32% Match F1）表明以推理步骤而非最终答案为优化目标可以显著改善推理过程质量，为process reward model研究提供了多模态领域的实验证据。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-label">好句摘录</div>
+      <div class="gs-block">
+        <div class="gs-orig">"universal cherry-picking, non-monotonic scaling trade-offs, and disordered reasoning reveal systematic failures invisible to accuracy metrics"</div>
+        <div class="gs-note">三个并列名词短语枚举具体失败模式，"invisible to accuracy metrics"一词既批评现有评测范式，又为本文新指标提供正当性依据，论证结构完整。</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">写作亮点</div>
+      <table class="phrase-table">
+        <tr><td>beyond final answers</td><td>标题词组，简洁宣示对现有评测范式的超越意图</td></tr>
+        <tr><td>verifiable intermediate steps</td><td>明确推理步骤可被外部核查的属性，区别于"reasoning traces"的模糊表述</td></tr>
+        <tr><td>universal cherry-picking</td><td>命名一类具体的系统性失败模式，便于后续文献引用</td></tr>
+        <tr><td>non-monotonic scaling trade-offs</td><td>描述模型规模与推理质量之间非线性关系的技术术语</td></tr>
+        <tr><td>Delphi-inspired pipeline</td><td>引用社会科学方法论描述参考步骤生成流程，提升可信度</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-label">核心方法论</div>
+      <div class="mono-block">算法层：CRYSTAL基准通过Delphi式人机协作流程生成多步推理参考答案；评测时将模型输出的推理步骤与参考步骤进行语义匹配，计算Match F1（覆盖率）和Ordered Match F1（顺序正确性）。Causal Process Reward训练方法以步骤级奖励信号替代答案级奖励，通过强化学习优化推理过程。
+
+分析层：两个F1指标提供推理质量的二维度量；20个模型的系统性评估揭示了规模与推理质量的非单调关系；Causal Process Reward的+32%提升隔离了训练目标（步骤奖励 vs 答案奖励）对推理质量的贡献。</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">实验结果</div>
+      <div class="section-content">在20个多模态大语言模型上识别出universal cherry-picking和disordered reasoning两类系统性缺陷，准确率指标无法检测这些问题。模型规模扩大不能单调提升推理步骤质量，出现accuracy-reasoning quality的trade-off。Causal Process Reward方法在Match F1上实现+32%的改进，证明步骤级优化目标的有效性。</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">与主线的联系</div>
+      <div class="section-content">
+        <span class="conn-tag">T1 LLM Reasoning</span><br><br>
+        本文直接推进T1方向中多模态推理评测方法论的研究边界，提供了超越准确率的步骤级评估框架。CRYSTAL的发现（cherry-picking、disordered reasoning）对chain-of-thought相关研究具有警示意义，表明CoT推理质量需要独立于准确率进行测量。Causal Process Reward的实验结果为process reward model研究在多模态领域的有效性提供了直接证据。后续可追踪：将CRYSTAL扩展到纯语言推理任务；以及进一步细化step-level reward的粒度设计。
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Paper 3 ── -->
+<div class="paper-card" id="paper-3">
+  <div class="card-header">
+    <div class="card-num">03 / 05</div>
+    <div class="card-title">ESG-Bench: Benchmarking Long-Context ESG Reports for Hallucination Mitigation</div>
+    <div class="card-meta-row">
+      <span>Siqi Sun et al.</span>
+      <span>·</span>
+      <span>AAAI 2026</span>
+      <span>·</span>
+      <span class="badge-pill">📄</span>
+      <span class="topic-badge t4">T4 Hallucination &amp; ICL</span>
+      <span class="card-id">Sun-2026-esg-bench-hallucination</span>
+      <a href="https://doi.org/10.48550/arXiv.2603.13154" class="doi-link" target="_blank">arXiv:2603.13154</a>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <div class="section">
+      <div class="section-label">摘要提炼</div>
+      <div class="abstract-box">
+        本文（AAAI 2026）提出ESG-Bench，一个基于真实ESG报告的长上下文QA基准，含人工标注的幻觉细粒度标签，验证了CoT类方法在减少幻觉方面相对标准提示和直接微调具有实质性优势，且该优势可迁移至ESG领域以外的已有QA基准。
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">背景与立意</div>
+      <div class="section-content">
+        大语言模型在处理长文档（如ESG报告、法律合同、财务披露）时存在幻觉问题，即生成与文档内容不符或无法被原文支持的回答。现有幻觉研究主要集中在通用短文档QA场景，对长上下文专业领域文档的细粒度幻觉评测工具较为匮乏。ESG报告因其结构复杂、数据密集且有明确的事实核查需求，为幻觉研究提供了具有代表性的真实领域。本文在ESG报告长上下文阅读设定下，构建首个含幻觉细粒度标注的QA基准，并验证CoT类提示策略相对于标准提示和直接微调的幻觉抑制效果。
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">核心创新点</div>
+      <ul class="inno-list">
+        <li data-n="①">在ESG报告长上下文专业文档设定下构建首个含细粒度幻觉标注（是否被原文支持）的QA基准，填补了长上下文专业领域幻觉评测的数据集空白。</li>
+        <li data-n="②">系统性对比标准提示、CoT类提示与直接微调三类方法在幻觉控制上的性能差异，提供具有可重复性的实验基线。</li>
+        <li data-n="③">验证ESG-Bench上训练/测试得到的CoT幻觉抑制效果可迁移至其他QA基准，证明基准的域外泛化价值。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-label">三个 Insight</div>
+      <ul class="insight-list">
+        <li>长上下文专业文档的幻觉评测需要细粒度的人工标注（每个答案是否被原文支持），而非仅依赖自动化指标；ESG领域提供了一个兼具可验证性和实际应用价值的标注场景。</li>
+        <li>CoT提示方法在幻觉控制上相对微调方法的优势，提示推理过程的显式化有助于模型在长文档阅读中锚定原文依据，而非依赖参数化记忆。</li>
+        <li>基准的域外迁移性（ESG → 其他QA基准）为评估长上下文幻觉抑制方法的泛化能力提供了标准化路径，这一设计思路值得类似领域特定基准借鉴。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-label">好句摘录</div>
+      <div class="gs-block">
+        <div class="gs-orig">"CoT-based methods substantially outperform standard prompting and direct fine-tuning in reducing hallucinations, and that the gains transfer to existing QA benchmarks beyond the ESG domain."</div>
+        <div class="gs-note">以"substantially outperform"直接陈述幅度，"transfer"一词延伸到泛化性，结构紧凑，是结果总结句的参考模板。</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">写作亮点</div>
+      <table class="phrase-table">
+        <tr><td>fine-grained labels indicating whether model outputs are factually supported</td><td>精确描述标注粒度，明确与粗粒度正确/错误标签的区别</td></tr>
+        <tr><td>grounded in real-world ESG report contexts</td><td>强调真实文档来源，区别于合成数据集</td></tr>
+        <tr><td>gains transfer to existing QA benchmarks</td><td>以"transfer"描述跨域泛化，避免了"generalize"的过度宽泛</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-label">核心方法论</div>
+      <div class="mono-block">算法层：ESG-Bench由人工标注者在真实ESG报告上构建QA对，每个答案附带"是否被原文支持"的二元标签。评测流程将模型输出与原文对照，判定幻觉类型。CoT类方法要求模型先生成推理步骤再给出答案，推理链中的引用行为可被监测。
+
+分析层：幻觉评测核心指标为hallucination rate（答案中被判定为不支持的比例）；CoT方法与基线的对比通过控制模型、数据集不变来隔离提示策略的影响；迁移实验将ESG训练策略应用于其他基准的测试集。</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">实验结果</div>
+      <div class="section-content">CoT类方法相对标准提示和直接微调在幻觉率上实现实质性下降。ESG-Bench上的幻觉抑制效果可迁移至其他域外QA基准，泛化性得到验证。</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">与主线的联系</div>
+      <div class="section-content">
+        <span class="conn-tag">T4 Hallucination &amp; ICL</span><br><br>
+        本文属于T4方向幻觉评测基础设施建设，提供了长上下文专业文档幻觉标注的标准化方案。CoT类方法幻觉抑制效果的验证为"推理过程显式化→幻觉降低"的假设提供了领域特定证据。后续可追踪：将ESG-Bench扩展到多语言版本；以及在RAG流程中引入幻觉标签作为检索质量的反馈信号。
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Paper 4 ── -->
+<div class="paper-card" id="paper-4">
+  <div class="card-header">
+    <div class="card-num">04 / 05</div>
+    <div class="card-title">Towards Faithful Multimodal Concept Bottleneck Models</div>
+    <div class="card-meta-row">
+      <span>Pierre Moreau, Emeline Pineau Ferrand et al.</span>
+      <span>·</span>
+      <span>arXiv 2026</span>
+      <span>·</span>
+      <span class="badge-pill">📄</span>
+      <span class="topic-badge t2">T2 Interpretability</span>
+      <span class="card-id">Moreau-2026-faithful-cbm</span>
+      <a href="https://doi.org/10.48550/arXiv.2603.13163" class="doi-link" target="_blank">arXiv:2603.13163</a>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <div class="section">
+      <div class="section-label">摘要提炼</div>
+      <div class="abstract-box">
+        本文提出f-CBM框架，通过可微分泄漏损失和Kolmogorov-Arnold Network（KAN）预测头，在多模态和纯文本数据集上实现准确率、概念检测精度与泄漏抑制三个指标的最优权衡。
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">背景与立意</div>
+      <div class="section-content">
+        概念瓶颈模型（CBM）通过人类可理解概念作为中间表示来提供可解释预测。在多模态（图像+文本）场景中，CBM面临两个核心问题：（1）概念检测的准确性；（2）概念泄漏（leakage）问题（概念表示中残存与预测目标相关的非概念信息，导致可解释性失真）。现有多模态CBM工作在处理泄漏问题时缺乏系统性优化机制，且预测头设计缺乏对概念交互的建模能力。本文在多模态CBM设定下，通过可微分泄漏损失和Kolmogorov-Arnold网络预测头的组合，在准确率、概念检测质量和泄漏抑制三个维度上实现帕累托最优。
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">核心创新点</div>
+      <ul class="inno-list">
+        <li data-n="①">提出可微分泄漏损失（differentiable leakage loss）作为概念泄漏的端对端优化目标，将泄漏抑制从后处理步骤整合至训练过程，使泄漏度量可被梯度优化直接针对。</li>
+        <li data-n="②">引入Kolmogorov-Arnold Network作为概念到预测的函数头，替代线性预测头，在保持可解释性的同时提升对概念间非线性交互的建模能力。</li>
+        <li data-n="③">在多模态（图像+文本）和纯文本两类设定下系统性验证框架有效性，证明泄漏抑制设计不依赖于特定模态组合。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-label">三个 Insight</div>
+      <ul class="insight-list">
+        <li>CBM的"可解释性"在泄漏存在的情况下是名义上的而非实质性的；泄漏损失的可微分化将这一可解释性失真从评估阶段前移至训练阶段，是将可解释性属性转化为可优化目标的一个具体示例。</li>
+        <li>KAN作为预测头的设计表明，可解释性（通过概念瓶颈保障）与建模能力（通过非线性函数逼近保障）之间的权衡可以在网络架构层面调和，而非必须通过牺牲其中一方来换取另一方。</li>
+        <li>三维度帕累托最优（准确率×检测质量×泄漏）的实验框架为多模态可解释性方法的标准化评估提供了参考，避免了单指标优化掩盖其他维度退化的问题。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-label">好句摘录</div>
+      <div class="gs-block">
+        <div class="gs-orig">"the best trade-off between task accuracy, concept detection, and leakage reduction"</div>
+        <div class="gs-note">以三元trade-off结构定位方法的优化目标，明确将leakage reduction与准确率并列为独立评估维度，是将可解释性属性量化为优化目标的典型表述方式。</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">写作亮点</div>
+      <table class="phrase-table">
+        <tr><td>differentiable leakage loss</td><td>将泄漏问题转化为可微损失函数的命名，明确方法的技术路径</td></tr>
+        <tr><td>faithful</td><td>标题词，指模型的概念表示真实反映了对应概念，与"accurate"区分</td></tr>
+        <tr><td>leakage mitigation</td><td>精确描述目标（降低但不必完全消除泄漏），避免了过度承诺</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-label">核心方法论</div>
+      <div class="mono-block">算法层：输入为多模态（图像+文本）或纯文本样本，输出为通过概念中间层的预测结果。概念检测层将输入映射到概念得分向量；可微分泄漏损失在训练时惩罚概念表示中残存的非概念信息（通过对抗性或正交性约束实现）；KAN预测头替代线性层，对概念得分向量进行非线性组合。
+
+分析层：三个评估维度（任务准确率、概念检测F1、泄漏度量）构成多目标优化问题；实验通过帕累托前沿分析比较各方法；泄漏度量的具体定义基于概念表示与任务标签的互信息或预测误差。</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">实验结果</div>
+      <div class="section-content">f-CBM在准确率、概念检测精度和泄漏抑制三个维度上实现最优权衡，优于现有CBM变体。方法在图文多模态和纯文本两类数据集上均有效，验证了设计的跨模态适用性。</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">与主线的联系</div>
+      <div class="section-content">
+        <span class="conn-tag">T2 Interpretability</span><br><br>
+        本文属于T2方向基于概念的可解释性（concept-based interpretability）研究，推进了多模态CBM在可信度（faithfulness）层面的研究边界。可微分泄漏损失的设计为其他需要将可解释性属性转化为优化目标的方法提供了参考框架。后续可追踪方向：将f-CBM与大型视觉语言模型（VLM）结合；以及将泄漏损失推广到神经网络中间层的通用表示纯化任务。
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Paper 5 ── -->
+<div class="paper-card" id="paper-5">
+  <div class="card-header">
+    <div class="card-num">05 / 05</div>
+    <div class="card-title">A Feasibility-Enhanced Control Barrier Function Method for Multi-UAV Collision Avoidance</div>
+    <div class="card-meta-row">
+      <span>Qishen Zhong, Junlong Wu, Jian Yang et al.</span>
+      <span>·</span>
+      <span>arXiv 2026</span>
+      <span>·</span>
+      <span class="badge-pill">📄</span>
+      <span class="topic-badge t3">T3 Control×LLM</span>
+      <span class="topic-badge t6">T6 Robotics Nav</span>
+      <span class="card-id">Zhong-2026-fecbf-multi-uav</span>
+      <a href="https://doi.org/10.48550/arXiv.2603.13103" class="doi-link" target="_blank">arXiv:2603.13103</a>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <div class="section">
+      <div class="section-label">摘要提炼</div>
+      <div class="abstract-box">
+        本文提出可行性增强控制障碍函数（FECBF）框架，通过引入sign-consistency约束与最坏情况估计松弛变量，在去中心化多UAV避碰设定下显著降低QP不可行频率，并通过时延鲁棒性测试与实飞实验验证了有效性。
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">背景与立意</div>
+      <div class="section-content">
+        多无人机协同避碰是自主飞行系统的核心安全需求。控制障碍函数（CBF）方法通过在线求解二次规划（QP）实现安全约束的强制执行，已被广泛应用于单机及小规模多机系统。然而，在稠密多UAV场景中，多个CBF约束同时生效时，约束不相容（constraint incompatibility）会导致QP无解，使安全保证完全失效。本文在去中心化多无人机控制这一实际设定下，针对CBF方法的QP可行性问题提出了系统性解决框架，在sign-consistency约束与松弛变量的基础上给出了可验证的可行性增强方案。
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">核心创新点</div>
+      <ul class="inno-list">
+        <li data-n="①">明确识别并形式化描述了多UAV稠密场景中CBF-QP约束不相容的可行性失效机制，提出sign-consistency约束作为核心保障设计。</li>
+        <li data-n="②">将最坏情况不确定性估计与松弛变量引入去中心化QP公式，在保持实时求解效率的同时提升约束满足的鲁棒性。</li>
+        <li data-n="③">完成真实无人机平台实飞验证，并在时延条件下测试鲁棒性，将方法适用范围从仿真扩展至物理平台。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-label">三个 Insight</div>
+      <ul class="insight-list">
+        <li>CBF方法在多智能体设置下面临的核心挑战不是单一约束的违反，而是多个并发约束之间的不相容性。sign-consistency类约束为处理耦合约束提供了一个值得关注的结构性工具。</li>
+        <li>安全关键控制方法的理论保证往往依赖可行性假设；本文将这一隐性假设转化为可主动设计的系统属性，对形式验证与安全强化学习方向均有启发。</li>
+        <li>去中心化实现是多UAV安全控制的实用约束，在去中心化框架内解决可行性问题对需要在实时嵌入式平台部署的研究具有直接参考价值。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="section-label">好句摘录</div>
+      <div class="gs-block">
+        <div class="gs-orig">"significantly reduces infeasibility and improves collision avoidance performance compared with existing baselines in dense scenarios"</div>
+        <div class="gs-note">以对比结构直接陈述实验结论，"dense scenarios"的限定词精确圈定了方法的适用场景，是method paper结论句的典型写法。</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">写作亮点</div>
+      <table class="phrase-table">
+        <tr><td>feasibility-enhanced</td><td>将工程属性（可行性）嵌入方法名称，便于后续工作引用和区分</td></tr>
+        <tr><td>constraint incompatibility</td><td>精确描述多约束并发时QP失效的机制，比"infeasibility"更具诊断价值</td></tr>
+        <tr><td>decentralized formulation</td><td>强调去中心化设定的关键词，与集中式方法形成对比</td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="section-label">核心方法论</div>
+      <div class="mono-block">算法层：输入为多UAV状态向量（位置、速度）及邻居状态，输出为每架UAV的加速度指令。核心QP在标准CBF约束上叠加sign-consistency约束，确保不同障碍物产生的CBF梯度方向一致性；引入松弛变量与最坏情况干扰估计处理时延和不确定性。整体为去中心化结构，每架UAV独立求解QP。
+
+分析层：可行性分析围绕多约束QP的相容条件展开；sign-consistency约束将几何冲突转化为代数条件；松弛变量引入保留了QP的始终可解性（always-feasible fallback）。</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">实验结果</div>
+      <div class="section-content">在稠密多UAV仿真场景中，FECBF显著降低QP不可行频率并提升碰撞避免成功率。在引入通信时延的条件下仍保持可行性和避碰有效性，验证了最坏情况估计设计的必要性。完成真实无人机平台实飞验证。</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">与主线的联系</div>
+      <div class="section-content">
+        <span class="conn-tag">T3 Control × LLM</span>
+        <span class="conn-tag">T6 Robotics Navigation</span><br><br>
+        本文属于安全约束优化方向，与T3（安全强化学习/约束优化策略）直接相关。FECBF的可行性增强设计对多智能体安全约束（如safe MARL中的barrier function构造）具有方法论借鉴价值。作为T6方向，为UAV导航的安全约束实现提供了可直接部署的去中心化方案。后续可追踪：将FECBF与学习型轨迹规划结合；以及验证更大规模无人机集群的可扩展性。
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /papers-container -->
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer class="page-footer">
+  <div>生成时间：2026-03-16 · 来源：arXiv · 批注语言：中文 · 由 /paper digest 自动生成</div>
+  <a href="../index.html" class="back-btn">← 返回看板</a>
+</footer>
+
+</body>
+</html>
