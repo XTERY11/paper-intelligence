@@ -29,11 +29,11 @@ PAPERS_DATA.push({
     "去中心化实现是多UAV安全控制的实用约束，在去中心化框架内解决可行性问题对需要在实时嵌入式平台部署的研究具有直接参考价值。"
   ],
   good_sentences: [
-    { original: "significantly reduces infeasibility and improves collision avoidance performance compared to existing methods in dense situations", note: "以对比结构直接陈述实验结论，"dense situations"的限定词精确圈定了方法的适用场景，是method paper结论句的典型写法。" }
+    { original: "significantly reduces infeasibility and improves collision avoidance performance compared to existing methods in dense situations", note: "以对比结构直接陈述实验结论，\"dense situations\"的限定词精确圈定了方法的适用场景，是method paper结论句的典型写法。" }
   ],
   writing_phrases: [
     { phrase: "feasibility-enhanced", note: "将工程属性（可行性）嵌入方法名称，便于后续工作引用和区分" },
-    { phrase: "constraint incompatibility", note: "精确描述多约束并发时QP失效的机制，比"infeasibility"更具诊断价值" },
+    { phrase: "constraint incompatibility", note: "精确描述多约束并发时QP失效的机制，比\"infeasibility\"更具诊断价值" },
     { phrase: "decentralized formulation", note: "强调去中心化设定的关键词，与集中式方法形成对比" }
   ],
   methodology: "算法层：输入为多UAV状态向量（位置、速度）及邻居状态，输出为每架UAV的加速度指令。核心QP在标准CBF约束上叠加sign-consistency约束，确保不同障碍物产生的CBF梯度方向一致性；引入松弛变量与最坏情况干扰估计处理时延和不确定性。整体为去中心化结构，每架UAV独立求解QP。\n分析层：可行性分析围绕多约束QP的相容条件展开；sign-consistency约束将几何冲突转化为代数条件；松弛变量引入保留了QP的始终可解性（always-feasible fallback）。",
@@ -63,15 +63,15 @@ PAPERS_DATA.push({
   insights: [
     "GRPO等推理训练方法的样本效率受限于同批次样本间的信息隔离；BiCC类跨样本信息流设计指向一类可普遍化的改进方向：在不增加采样成本的前提下提升批次内信息利用率。",
     "奖励信号与模型置信度之间的不对齐是训练不稳定的一个可追踪来源；RCC提供了通过统计量（协方差）将两者解耦的具体途径，这一思路对其他基于奖励的训练方法也可能适用。",
-    ""无侵入式"设计原则（对GRPO所有变体兼容且不增加推理开销）对需要在已有训练流程上叠加改进的研究具有参考价值。"
+    "\"无侵入式\"设计原则（对GRPO所有变体兼容且不增加推理开销）对需要在已有训练流程上叠加改进的研究具有参考价值。"
   ],
   good_sentences: [
-    { original: "GRPO objectives implicitly maximize margins between policy ratios of correct and incorrect outputs", note: "以"implicitly"一词点明原方法的隐式机制，并为BiCC的显式化设计提供理论锚点，是从理论分析过渡到方法设计的典型连接句。" }
+    { original: "GRPO objectives implicitly maximize margins between policy ratios of correct and incorrect outputs", note: "以\"implicitly\"一词点明原方法的隐式机制，并为BiCC的显式化设计提供理论锚点，是从理论分析过渡到方法设计的典型连接句。" }
   ],
   writing_phrases: [
     { phrase: "bilateral context conditioning", note: "双边/双向条件化，强调正负样本的对称处理" },
     { phrase: "reward-confidence covariance", note: "将两个独立信号的联合统计量作为调整依据，表述精确" },
-    { phrase: "no additional sampling or auxiliary models", note: "明确列举"不增加"的约束，定位方法的轻量化特性" },
+    { phrase: "no additional sampling or auxiliary models", note: "明确列举\"不增加\"的约束，定位方法的轻量化特性" },
     { phrase: "consistent improvements", note: "强调跨基准的稳定性而非单点最优，适合方法论贡献的表达" }
   ],
   methodology: "算法层：在GRPO标准批次采样基础上，BiCC将同批次正确推理轨迹（高奖励样本）与错误轨迹（低奖励样本）拼接为条件上下文，注入当前样本的优势计算中；RCC基于当前批次奖励-置信度协方差调整优势基准，取代纯奖励均值基准。两个机制均在反向传播之前作用于优势估计阶段，无需修改采样流程。\n分析层：理论上GRPO目标可被重写为正确与错误样本策略比间隔的最大化问题；BiCC的上下文条件化使该间隔的优化更直接；RCC的协方差修正抑制了奖励-置信度不对齐引起的梯度方差。",
@@ -104,16 +104,16 @@ PAPERS_DATA.push({
     "基准的域外迁移性（ESG → 其他QA基准）为评估长上下文幻觉抑制方法的泛化能力提供了标准化路径，这一设计思路值得类似领域特定基准借鉴。"
   ],
   good_sentences: [
-    { original: "CoT-based methods substantially outperform standard prompting and direct fine-tuning in reducing hallucinations, and that the gains transfer to existing QA benchmarks beyond the ESG domain.", note: "以"substantially outperform"直接陈述幅度，"transfer"一词延伸到泛化性，结构紧凑，是结果总结句的参考模板。" }
+    { original: "CoT-based methods substantially outperform standard prompting and direct fine-tuning in reducing hallucinations, and that the gains transfer to existing QA benchmarks beyond the ESG domain.", note: "以\"substantially outperform\"直接陈述幅度，\"transfer\"一词延伸到泛化性，结构紧凑，是结果总结句的参考模板。" }
   ],
   writing_phrases: [
     { phrase: "fine-grained labels indicating whether model outputs are factually supported", note: "精确描述标注粒度，明确与粗粒度正确/错误标签的区别" },
     { phrase: "grounded in real-world ESG report contexts", note: "强调真实文档来源，区别于合成数据集" },
-    { phrase: "gains transfer to existing QA benchmarks", note: "以"transfer"描述跨域泛化，避免了"generalize"的过度宽泛" }
+    { phrase: "gains transfer to existing QA benchmarks", note: "以\"transfer\"描述跨域泛化，避免了\"generalize\"的过度宽泛" }
   ],
-  methodology: "算法层：ESG-Bench由人工标注者在真实ESG报告上构建QA对，每个答案附带"是否被原文支持"的二元标签。评测流程将模型输出与原文对照，判定幻觉类型。CoT类方法要求模型先生成推理步骤再给出答案，推理链中的引用行为可被监测。\n分析层：幻觉评测核心指标为hallucination rate（答案中被判定为不支持的比例）；CoT方法与基线的对比通过控制模型、数据集不变来隔离提示策略的影响；迁移实验将ESG训练策略应用于其他基准的测试集。",
+  methodology: "算法层：ESG-Bench由人工标注者在真实ESG报告上构建QA对，每个答案附带\"是否被原文支持\"的二元标签。评测流程将模型输出与原文对照，判定幻觉类型。CoT类方法要求模型先生成推理步骤再给出答案，推理链中的引用行为可被监测。\n分析层：幻觉评测核心指标为hallucination rate（答案中被判定为不支持的比例）；CoT方法与基线的对比通过控制模型、数据集不变来隔离提示策略的影响；迁移实验将ESG训练策略应用于其他基准的测试集。",
   results: "CoT类方法相对标准提示和直接微调在幻觉率上实现实质性下降（具体数字未在摘要中列出）。ESG-Bench上的幻觉抑制效果可迁移至其他域外QA基准，泛化性得到验证。",
-  connection: "分类：T4 Hallucination & ICL\n\n联系：本文属于T4方向幻觉评测基础设施建设，提供了长上下文专业文档幻觉标注的标准化方案。CoT类方法幻觉抑制效果的验证为"推理过程显式化→幻觉降低"的假设提供了领域特定证据。后续可追踪：将ESG-Bench扩展到多语言版本；以及在RAG流程中引入幻觉标签作为检索质量的反馈信号。",
+  connection: "分类：T4 Hallucination & ICL\n\n联系：本文属于T4方向幻觉评测基础设施建设，提供了长上下文专业文档幻觉标注的标准化方案。CoT类方法幻觉抑制效果的验证为\"推理过程显式化→幻觉降低\"的假设提供了领域特定证据。后续可追踪：将ESG-Bench扩展到多语言版本；以及在RAG流程中引入幻觉标签作为检索质量的反馈信号。",
   doi: "https://doi.org/10.48550/arXiv.2603.13154",
   annotation_path: "annotations/Sun-2026-esg-bench-hallucination.html"
 });
@@ -128,24 +128,24 @@ PAPERS_DATA.push({
   badge: "📄",
   topics: ["T1"],
   date_added: "2026-03-16",
-  background: "多模态大语言模型的推理能力评测长期依赖最终答案准确率，忽略了推理过程的正确性和步骤顺序的合理性。这类"黑盒"评测无法区分"答案正确但推理错误"与"推理过程正确"两种情形，也无法检测模型在推理步骤上的系统性缺陷（如步骤乱序、选择性使用便于得分的中间步骤）。本文在多模态推理这一设定下，构建首个通过可验证中间步骤评估推理透明度的基准，并提出量化推理步骤质量和顺序的新指标。",
-  abstract_zh: "本文提出CRYSTAL基准（6,372个实例），通过Match F1和Ordered Match F1两个步骤级指标评估多模态模型的推理过程质量，对20个多模态大语言模型的评估揭示了"universal cherry-picking"等系统性推理缺陷，并提出Causal Process Reward训练方法，在Match F1上实现+32%提升。",
+  background: "多模态大语言模型的推理能力评测长期依赖最终答案准确率，忽略了推理过程的正确性和步骤顺序的合理性。这类\"黑盒\"评测无法区分\"答案正确但推理错误\"与\"推理过程正确\"两种情形，也无法检测模型在推理步骤上的系统性缺陷（如步骤乱序、选择性使用便于得分的中间步骤）。本文在多模态推理这一设定下，构建首个通过可验证中间步骤评估推理透明度的基准，并提出量化推理步骤质量和顺序的新指标。",
+  abstract_zh: "本文提出CRYSTAL基准（6,372个实例），通过Match F1和Ordered Match F1两个步骤级指标评估多模态模型的推理过程质量，对20个多模态大语言模型的评估揭示了\"universal cherry-picking\"等系统性推理缺陷，并提出Causal Process Reward训练方法，在Match F1上实现+32%提升。",
   innovations: [
-    "提出以可验证中间步骤为核心的多模态推理评测框架，与仅测最终答案的传统评测形成方法论对照，为"推理质量"提供了可操作的量化定义。",
+    "提出以可验证中间步骤为核心的多模态推理评测框架，与仅测最终答案的传统评测形成方法论对照，为\"推理质量\"提供了可操作的量化定义。",
     "设计Match F1和Ordered Match F1两个互补指标，分别衡量步骤覆盖率和步骤顺序正确性，并通过Delphi式流程结合人工验证生成参考推理步骤。",
-    "在20个多模态模型上系统性揭示"universal cherry-picking"（选择性匹配有利步骤）和"disordered reasoning"（步骤乱序）两类用精度指标无法检测的系统性失败模式。"
+    "在20个多模态模型上系统性揭示\"universal cherry-picking\"（选择性匹配有利步骤）和\"disordered reasoning\"（步骤乱序）两类用精度指标无法检测的系统性失败模式。"
   ],
   insights: [
-    "准确率评测与推理质量评测之间存在结构性不一致：模型可以通过选择性推理在最终答案准确率上表现良好，而实际推理过程存在严重缺陷。这一"非单调缩放权衡"提示对现有推理能力排行榜的解读需要保持谨慎。",
-    "步骤顺序是推理质量的独立维度：Ordered Match F1相对Match F1可以揭示额外的模型差异，说明"做对每一步"与"按正确顺序推理"是两个需要分别测量的能力。",
+    "准确率评测与推理质量评测之间存在结构性不一致：模型可以通过选择性推理在最终答案准确率上表现良好，而实际推理过程存在严重缺陷。这一\"非单调缩放权衡\"提示对现有推理能力排行榜的解读需要保持谨慎。",
+    "步骤顺序是推理质量的独立维度：Ordered Match F1相对Match F1可以揭示额外的模型差异，说明\"做对每一步\"与\"按正确顺序推理\"是两个需要分别测量的能力。",
     "Causal Process Reward训练方法（+32% Match F1）表明以推理步骤而非最终答案为优化目标可以显著改善推理过程质量，为process reward model研究提供了多模态领域的实验证据。"
   ],
   good_sentences: [
-    { original: "universal cherry-picking, non-monotonic scaling trade-offs, and disordered reasoning reveal systematic failures invisible to accuracy metrics", note: "三个并列名词短语枚举具体失败模式，"invisible to accuracy metrics"一词既批评现有评测范式，又为本文新指标提供正当性依据，论证结构完整。" }
+    { original: "universal cherry-picking, non-monotonic scaling trade-offs, and disordered reasoning reveal systematic failures invisible to accuracy metrics", note: "三个并列名词短语枚举具体失败模式，\"invisible to accuracy metrics\"一词既批评现有评测范式，又为本文新指标提供正当性依据，论证结构完整。" }
   ],
   writing_phrases: [
     { phrase: "beyond final answers", note: "标题词组，简洁地宣示对现有评测范式的超越意图" },
-    { phrase: "verifiable intermediate steps", note: "明确推理步骤可被外部核查的属性，区别于"reasoning traces"的模糊表述" },
+    { phrase: "verifiable intermediate steps", note: "明确推理步骤可被外部核查的属性，区别于\"reasoning traces\"的模糊表述" },
     { phrase: "universal cherry-picking", note: "命名一类具体的系统性失败模式，便于后续文献引用" },
     { phrase: "non-monotonic scaling trade-offs", note: "描述模型规模与推理质量之间非线性关系的技术术语" },
     { phrase: "Delphi-inspired pipeline", note: "引用社会科学方法论描述参考步骤生成流程，提升可信度" }
@@ -175,7 +175,7 @@ PAPERS_DATA.push({
     "在多模态（图像+文本）和纯文本两类设定下系统性验证框架有效性，证明泄漏抑制设计不依赖于特定模态组合。"
   ],
   insights: [
-    "CBM的"可解释性"在泄漏存在的情况下是名义上的而非实质性的；泄漏损失的可微分化将这一可解释性失真从评估阶段前移至训练阶段，是将可解释性属性转化为可优化目标的一个具体示例。",
+    "CBM的\"可解释性\"在泄漏存在的情况下是名义上的而非实质性的；泄漏损失的可微分化将这一可解释性失真从评估阶段前移至训练阶段，是将可解释性属性转化为可优化目标的一个具体示例。",
     "KAN作为预测头的设计表明，可解释性（通过概念瓶颈保障）与建模能力（通过非线性函数逼近保障）之间的权衡可以在网络架构层面调和，而非必须通过牺牲其中一方来换取另一方。",
     "三维度帕累托最优（准确率×检测质量×泄漏）的实验框架为多模态可解释性方法的标准化评估提供了参考，避免了单指标优化掩盖其他维度退化的问题。"
   ],
@@ -184,7 +184,7 @@ PAPERS_DATA.push({
   ],
   writing_phrases: [
     { phrase: "differentiable leakage loss", note: "将泄漏问题转化为可微损失函数的命名，明确方法的技术路径" },
-    { phrase: "faithful", note: "标题词，指模型的概念表示真实反映了对应概念，与"accurate"区分" },
+    { phrase: "faithful", note: "标题词，指模型的概念表示真实反映了对应概念，与\"accurate\"区分" },
     { phrase: "leakage mitigation", note: "精确描述目标（降低但不必完全消除泄漏），避免了过度承诺" }
   ],
   methodology: "算法层：输入为多模态（图像+文本）或纯文本样本，输出为通过概念中间层的预测结果。概念检测层将输入映射到概念得分向量；可微分泄漏损失在训练时惩罚概念表示中残存的非概念信息（通过对抗性或正交性约束实现）；KAN预测头替代线性层，对概念得分向量进行非线性组合。\n分析层：三个评估维度（任务准确率、概念检测F1、泄漏度量）构成多目标优化问题；实验通过帕累托前沿分析比较各方法；泄漏度量的具体定义基于概念表示与任务标签的互信息或预测误差。",

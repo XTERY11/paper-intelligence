@@ -17,7 +17,7 @@ cd /home/ctx/papers
 
 # Step 1: 运行 digest
 echo "[1/3] Running paper digest..." | tee -a "$LOG"
-claude --print "/paper digest" >> "$LOG" 2>&1
+claude --dangerously-skip-permissions --print "/paper digest" >> "$LOG" 2>&1
 EXIT_CODE=$?
 echo "$(date '+%Y-%m-%d %H:%M:%S') digest 完成 (exit: $EXIT_CODE)" >> "$LOG"
 
@@ -28,7 +28,7 @@ python3 /home/ctx/papers/send_digest_email.py >> "$LOG" 2>&1
 # Step 3: Git 同步
 echo "[3/3] Git sync..." | tee -a "$LOG"
 if git -C /home/ctx/papers remote | grep -q origin 2>/dev/null; then
-    git -C /home/ctx/papers add papers_data.js 2>/dev/null && \
+    git -C /home/ctx/papers add papers_data.js digests/ annotations/ 2>/dev/null && \
     git -C /home/ctx/papers commit -m "auto: daily digest $(date +%Y-%m-%d)" 2>/dev/null && \
     git -C /home/ctx/papers push origin main >> "$LOG" 2>&1 && \
     echo "Git push done." | tee -a "$LOG" || true

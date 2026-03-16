@@ -36,17 +36,68 @@ TOPIC_NAMES = {
 def get_today_papers(target_date: str) -> list:
     js_file = PAPERS_DIR / "papers_data.js"
     if not js_file.exists():
+        print(f"DEBUG: 文件不存在: {js_file}")
         return []
-    text = js_file.read_text(encoding="utf-8")
-    # Extract the JS array
-    m = re.search(r'const papers\s*=\s*(\[[\s\S]*?\]);', text)
-    if not m:
-        return []
-    try:
-        papers = json.loads(m.group(1))
-    except json.JSONDecodeError:
-        return []
-    return [p for p in papers if p.get("added", "") == target_date]
+    content = js_file.read_text(encoding="utf-8")
+    print(f"DEBUG: 文件总行数={len(content.splitlines())}")
+
+    # Format: PAPERS_DATA.push({...}); — extract each push block
+    raw_entries = re.findall(r'PAPERS_DATA\.push\(([\s\S]*?)\);', content)
+    print(f"DEBUG: 匹配到原始条目数={len(raw_entries)}")
+    print(f"DEBUG: 今日日期={target_date}")
+
+    def js_to_json(raw: str) -> str:
+        """Convert JS object literal to JSON: quote bare keys and strip trailing commas,
+        but only outside string literals to avoid corrupting string contents."""
+        parts = []
+        i = 0
+        seg_start = 0
+        in_string = False
+        while i < len(raw):
+            c = raw[i]
+            if not in_string:
+                if c == '"':
+                    # Flush non-string segment (apply transformations)
+                    chunk = raw[seg_start:i]
+                    chunk = re.sub(r'(?<!["\w])(\b[a-zA-Z_]\w*\b)\s*:', r'"\1":', chunk)
+                    chunk = re.sub(r',(\s*[}\]])', r'\1', chunk)
+                    parts.append(chunk)
+                    seg_start = i
+                    in_string = True
+                    i += 1
+                else:
+                    i += 1
+            else:
+                if c == '\\':
+                    i += 2  # skip escaped char
+                elif c == '"':
+                    # Flush string segment as-is
+                    parts.append(raw[seg_start:i + 1])
+                    seg_start = i + 1
+                    in_string = False
+                    i += 1
+                else:
+                    i += 1
+        # Flush remaining non-string segment
+        chunk = raw[seg_start:]
+        chunk = re.sub(r'(?<!["\w])(\b[a-zA-Z_]\w*\b)\s*:', r'"\1":', chunk)
+        chunk = re.sub(r',(\s*[}\]])', r'\1', chunk)
+        parts.append(chunk)
+        return ''.join(parts)
+
+    papers = []
+    for raw in raw_entries:
+        j = js_to_json(raw)
+        try:
+            obj = json.loads(j)
+            papers.append(obj)
+        except json.JSONDecodeError as e:
+            print(f"DEBUG: block parse failed: {e}")
+            continue
+
+    today = [p for p in papers if p.get("date_added", "") == target_date]
+    print(f"DEBUG: 匹配今日条目数={len(today)}")
+    return today
 
 
 def topic_color(t: str) -> str:
