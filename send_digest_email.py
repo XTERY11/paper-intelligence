@@ -164,7 +164,7 @@ def send_email(html: str, target_date: str):
     msg = MIMEMultipart("alternative")
     msg["Subject"] = f"[Paperwise] {target_date} 学术日报"
     msg["From"] = cfg.SMTP_USER
-    msg["To"] = cfg.TO_EMAIL
+    msg["To"] = cfg.RECIPIENT
     msg.attach(MIMEText(html, "html", "utf-8"))
 
     try:
@@ -172,8 +172,8 @@ def send_email(html: str, target_date: str):
             server.ehlo()
             server.starttls()
             server.login(cfg.SMTP_USER, cfg.SMTP_PASS)
-            server.sendmail(cfg.SMTP_USER, cfg.TO_EMAIL, msg.as_string())
-        print(f"✓ 邮件已发送至 {cfg.TO_EMAIL}")
+            server.sendmail(cfg.SMTP_USER, cfg.RECIPIENT, msg.as_string())
+        print(f"✓ 邮件已发送至 {cfg.RECIPIENT}")
     except smtplib.SMTPAuthenticationError:
         print("错误：SMTP 认证失败，请检查用户名和密码（Gmail 需使用应用专用密码）。")
         sys.exit(1)

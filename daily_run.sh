@@ -1,32 +1,37 @@
 #!/usr/bin/env bash
-# Paperwise 每日自动任务 wrapper
-# 顺序：Claude digest → 发邮件 → git push
-set -euo pipefail
+# Paperwise 每日任务：抓取论文 + 发送邮件 + 同步 GitHub
+set -e
+LOG="/home/ctx/papers/digest.log"
 
-PAPERS_DIR="/home/ctx/papers"
-LOG="$PAPERS_DIR/digest.log"
-DATE=$(date '+%Y-%m-%d %H:%M:%S')
+echo "" >> "$LOG"
+echo "════════════════════════════════" >> "$LOG"
+echo "$(date '+%Y-%m-%d %H:%M:%S') 开始每日抓取" >> "$LOG"
 
-echo "=== $DATE ===" >> "$LOG"
+# 加载项目级 API Key（走 platform.anthropic.com Credits）
+if [ -f /home/ctx/papers/.env ]; then
+    export $(cat /home/ctx/papers/.env | xargs)
+    echo "$(date '+%Y-%m-%d %H:%M:%S') API Key 已加载" >> "$LOG"
+fi
 
-# 1. Claude paper digest
+cd /home/ctx/papers
+
+# Step 1: 运行 digest
 echo "[1/3] Running paper digest..." | tee -a "$LOG"
-claude --print "/paper digest" >> "$LOG" 2>&1 || echo "WARN: digest exited non-zero" >> "$LOG"
+claude --print "/paper digest" >> "$LOG" 2>&1
+EXIT_CODE=$?
+echo "$(date '+%Y-%m-%d %H:%M:%S') digest 完成 (exit: $EXIT_CODE)" >> "$LOG"
 
-# 2. Send email
+# Step 2: 发送邮件
 echo "[2/3] Sending digest email..." | tee -a "$LOG"
-python3 "$PAPERS_DIR/send_digest_email.py" >> "$LOG" 2>&1 || echo "WARN: email exited non-zero" >> "$LOG"
+python3 /home/ctx/papers/send_digest_email.py >> "$LOG" 2>&1
 
-# 3. Git push (only if remote is configured)
+# Step 3: Git 同步
 echo "[3/3] Git sync..." | tee -a "$LOG"
-cd "$PAPERS_DIR"
-if git remote get-url origin > /dev/null 2>&1; then
-    git add papers_data.js 2>/dev/null || true
-    git diff --cached --quiet || git commit -m "data: daily update $(date '+%Y-%m-%d')" >> "$LOG" 2>&1
-    git push >> "$LOG" 2>&1 || echo "WARN: git push failed" >> "$LOG"
-    echo "Git push done." | tee -a "$LOG"
-else
-    echo "No git remote configured, skipping push." | tee -a "$LOG"
+if git -C /home/ctx/papers remote | grep -q origin 2>/dev/null; then
+    git -C /home/ctx/papers add papers_data.js 2>/dev/null && \
+    git -C /home/ctx/papers commit -m "auto: daily digest $(date +%Y-%m-%d)" 2>/dev/null && \
+    git -C /home/ctx/papers push origin main >> "$LOG" 2>&1 && \
+    echo "Git push done." | tee -a "$LOG" || true
 fi
 
 echo "=== done ===" >> "$LOG"
