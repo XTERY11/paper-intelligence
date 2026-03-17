@@ -230,3 +230,189 @@ PAPERS_DATA.push({
   doi: "https://arxiv.org/abs/2201.11903",
   annotation_path: "annotations/Wei-2022-chain-of-thought.html"
 });
+
+// ── 2026-03-17 digest ──────────────────────────────────────────────────────
+PAPERS_DATA.push({
+  id: "Wang-2026-horizonmath-benchmark",
+  title: "HorizonMath: Measuring AI Progress Toward Mathematical Discovery with Automatic Verification",
+  authors: "Wang, E. Y. et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T1"],
+  date_added: "2026-03-17",
+  background: "LLM在数学推理方面能力快速提升，但现有研究级评估基准（如FrontierMath）依赖形式化证明验证（Lean/Coq）或人工审阅，成本高且难以扩展；竞赛题基准（AMC/AIME）则因可能出现在训练集中而存在数据污染风险。本文立意是：在计算数学与应用数学8个领域中，构建一个由100+真正未解决的开放问题组成的基准，配合自动化验证框架，在无污染风险的条件下系统评估AI在真正数学研究意义上的发现能力。属于类型B——将评估设定从已知题库推向真正未解决的研究问题。",
+  abstract_zh: "本文构建 HorizonMath，一个包含100+未解决数学开放问题（覆盖8个计算/应用数学领域）的基准，配合开源自动验证框架；实验发现主流顶级模型得分近0%，GPT 5.4 Pro 对2个问题给出超越已有最佳结果的候选解答（待专家验证），提供了AI数学发现能力的首个可核实实证据点。",
+  innovations: [
+    "设计\"发现难、验证简\"的问题选择标准，有效规避数据污染并支持大规模自动化评估，无需形式化证明系统",
+    "建立针对未解决开放问题的自动验证框架，将\"超越已知最佳结果\"定义为AI贡献，提供可量化的评估准则",
+    "在基准上发现 GPT 5.4 Pro 对两道题给出超越已有最优解的候选答案，为AI数学研究能力提供了首个可核实的实证据点（待专家验证）"
+  ],
+  insights: [
+    "评估\"AI能否做真正的数学研究\"与\"AI能否解已知竞赛题\"是两个不同的问题设定；现有CoT/推理增强方法在竞赛题上的高分不能外推到未解决研究问题的场景，两者需要不同的评估基础设施。",
+    "\"发现难、验证易\"这一非对称性是构建评估基准的理想特征：同时规避了污染风险和人工审阅成本，值得在其他科学领域（如组合优化、物理模拟）的AI能力评估中推广。",
+    "现有最强 LLM 在 HorizonMath 上近0%的得分表明，当前推理能力增强主要提升的是模式识别与类比推理，而非真正意义上的数学发现——这对推理能力上限的判断有重要启示。"
+  ],
+  good_sentences: [
+    { original: "Because these solutions are unknown, HorizonMath is immune to data contamination, and most state-of-the-art models score near 0%.", note: "以两个平行结果（免疫污染 + 近零得分）直接定位基准价值，同时完成动机陈述和结果预告，是典型的基准设计声明句型。" }
+  ],
+  writing_phrases: [
+    { phrase: "discovery is hard, requiring meaningful mathematical insight, but verification is computationally efficient and simple", note: "对称结构描述基准选题标准，清晰呈现难/易不对称性" },
+    { phrase: "immune to data contamination", note: "以\"免疫\"隐喻简洁表达对污染问题的设计性规避" },
+    { phrase: "pending expert review", note: "谨慎限定初步发现的确定性，展示结果声明的规范性写法" }
+  ],
+  methodology: "算法层：从计算数学8个领域（数论、组合优化、数值分析等）手动收集100+有记录最佳已知结果但未正式证明的开放问题；为每道题定义数值检验或组合验证函数；将问题提交LLM，对输出解答运行验证函数；以\"超越已知最佳结果\"判定AI贡献。对比模型包括GPT-4o、o1、o3、GPT-5.4 Pro等。\n分析层：无统计收敛分析，属实证评估论文；通过模型规模与解答率的关系观察涌现特征；GPT 5.4 Pro的两个候选解答正提交领域专家进行独立核实。",
+  results: "主流模型（GPT-4o、o1、o3系列）在HorizonMath上得分均近0%，证实基准难度远超现有竞赛题基准。GPT 5.4 Pro在2道题上提出超越已知最佳结果的候选解答，正在进行专家验证。",
+  connection: "分类：T1 LLM Reasoning\n\n联系：本文将LLM推理的评估设定从可验证竞赛题推向真正未解决的研究问题，提供了一个无污染的长链推理压力测试基准。对T1方向而言可直接作为高上限基准使用。后续可追踪方向：将HorizonMath中的问题引入多步推理训练管道；将自动验证框架推广至其他科学领域的开放问题评估。",
+  doi: "https://doi.org/10.48550/arXiv.2603.15617",
+  annotation_path: "annotations/Wang-2026-horizonmath-benchmark.html"
+});
+
+PAPERS_DATA.push({
+  id: "Li-2026-moral-indifference-llm",
+  title: "Mechanistic Origin of Moral Indifference in Language Models",
+  authors: "Li, L. et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T2"],
+  date_added: "2026-03-17",
+  background: "当前LLM对齐技术（RLHF、DPO等）从行为层面训练模型输出对齐回答，但忽视了模型内部表示与道德语义之间的结构关系。已有工作表明表面对齐可被adversarial攻击破解，但缺乏对失败的机制层面分析。本文立意是：在LLM表示空间中分析道德推理失败的机制原因，作者称之为\"道德冷漠\"（模型对相对立道德概念及类别内细粒度差异的表示无法区分），并通过表示层面的干预（而非行为层面）修复这一缺陷。",
+  abstract_zh: "本文通过构建251k道德向量分析23个LLM的道德表示空间结构，发现模型普遍存在\"道德冷漠\"现象（无法区分对立道德概念及类别内细粒度差异），且该现象与模型规模、架构和对齐方法均无关；进一步利用Sparse Autoencoder隔离Qwen3-8B的单义道德特征并重建拓扑关系，在adversarial基准Flames上实现75%的pairwise win-rate。",
+  innovations: [
+    "首次通过Prototype Theory系统性分析23个LLM的道德表示空间结构，证明\"道德冷漠\"是普遍现象，与模型规模、架构和对齐方法均无关",
+    "利用Sparse Autoencoder在Qwen3-8B上隔离单义道德特征，并通过拓扑重建实现表示层面的对齐，提供了区别于行为层干预的可操作路径",
+    "在独立adversarial基准（Flames）上验证表示层对齐对道德推理的迁移效果，将内部结构改变与外部行为改善建立直接关联"
+  ],
+  insights: [
+    "\"道德冷漠\"源于训练目标（下一词预测）对语义细粒度的系统性压缩——这一分析视角比\"对齐数据不足\"更具解释力，因为它将失败追溯到训练机制本身，而非数据质量问题。",
+    "Prototype Theory作为认知科学框架可迁移至LLM表示分析：类别典型性梯度是评估模型内部概念表示质量的可测量维度，值得在其他概念领域（如事实性、因果性）推广。",
+    "行为对齐（RLHF/DPO）与表示对齐是不同层次的干预：前者修改输出分布，后者修改内部结构——两者对adversarial攻击的鲁棒性和泛化能力可能有系统性差异，值得独立评估。"
+  ],
+  good_sentences: [
+    { original: "neither model scaling, architecture, nor explicit alignment reshapes this indifference", note: "以三元否定并列排除三种常见解释路径（规模、架构、对齐），将问题定位到更根本的机制层，是典型的现象归因句型，说明为什么已有方法不够。" }
+  ],
+  writing_phrases: [
+    { phrase: "surface compliance and internal unaligned representations", note: "精确区分行为层和表示层的对齐状态，明确引出本文的研究问题" },
+    { phrase: "moral indifference", note: "自创术语描述模型道德表示的平坦化现象，简洁且指向可测量属性" },
+    { phrase: "endogenously aligned AI", note: "与\"post-hoc corrections\"对比，指向内在培养而非外部修正，是结论段的价值主张表述" }
+  ],
+  methodology: "算法层：基于Prototype Theory和Social-Chemistry-101数据集构建251k道德向量；计算各模型对相对立道德类别的表示距离（cosine similarity）；使用Sparse Autoencoder（SAE）在Qwen3-8B中分离单义道德特征；通过拓扑重建（调整特征关联结构）使道德表示与ground-truth道德向量对齐；在Flames adversarial基准上评估（pairwise win-rate）。\n分析层：分析维度包括类别间距离（区分对立道德概念）和类别内典型性梯度（细粒度程度识别）；23个模型的横向比较控制了架构、规模和对齐方法变量，提供大规模统计支持。",
+  results: "23个LLM均表现出道德冷漠：类别间表示距离不显著，类别内典型性梯度缺失；模型规模增大和RLHF对齐均未改善此现象。Qwen3-8B经表示层干预后，在Flames adversarial基准上实现75% pairwise win-rate，优于未干预基线。",
+  connection: "分类：T2 Interpretability\n\n联系：本文属于T2方向机制可解释性的子方向——对LLM道德表示空间的结构分析。SAE隔离单义特征的方法与当前机制可解释性主流工具链直接对应，可作为方法框架参考。后续可追踪方向：将道德表示分析推广至其他价值类别（真实性、有益性）；将SAE干预方法与RLHF/DPO结合评估混合效果。",
+  doi: "https://doi.org/10.48550/arXiv.2603.15615",
+  annotation_path: "annotations/Li-2026-moral-indifference-llm.html"
+});
+
+PAPERS_DATA.push({
+  id: "Xiong-2026-anatomy-hallucination",
+  title: "Anatomy of a Lie: A Multi-Stage Diagnostic Framework for Tracing Hallucinations in Vision-Language Models",
+  authors: "Xiong, L. et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T4", "T2"],
+  date_added: "2026-03-17",
+  background: "VLM幻觉检测的主流方法将幻觉视为静态输出错误（对输出结果分类），缺乏对幻觉如何在模型计算过程中产生的动态理解。已有检测方法（基于分类器、基于校准等）难以提供因果归因，且在不同幻觉类型之间泛化性差。本文立意是：将VLM生成过程建模为\"认知轨迹\"，通过信息论探针投影到低维认知状态空间，在此空间中将幻觉检测重构为几何异常检测问题，从而实现对不同幻觉来源的因果归因。",
+  abstract_zh: "本文提出将VLM幻觉重构为模型计算轨迹中的动态病理，基于\"几何-信息对偶\"原理设计三类信息论探针（Perceptual Entropy、Inferential Conflict、Decision Entropy），在POPE（二元QA）、MME（综合推理）、MS-COCO（开放式描述）三类基准上达到最优检测性能，并可归因区分三类幻觉来源（感知不稳定性、逻辑-因果失败、决策歧义）。",
+  innovations: [
+    "提出\"几何-信息对偶\"原理：认知轨迹的几何异常与信息论意义上的高surprisal在数学上等价，将检测问题统一为单一几何异常检测框架",
+    "设计三类信息论探针（Perceptual Entropy、Inferential Conflict、Decision Entropy）对应三类幻觉病理，实现幻觉的因果归因而非仅二元检测",
+    "在弱监督和校准数据被污染的条件下保持高鲁棒性，验证了方法对实际部署条件（低标注、分布外数据）的适应能力"
+  ],
+  insights: [
+    "将幻觉从\"输出分类问题\"重新定义为\"计算轨迹的动态分析问题\"是分析视角的根本转变——这一范式迁移值得在其他模型失效类型（推理错误、偏见输出）上推广，提供统一的失效诊断框架。",
+    "\"几何异常 ≡ 信息论高surprisal\"这一对偶关系表明，几何视角与概率视角在分析模型内部状态时互相等价：可根据计算便利性灵活选择分析工具，而不改变结论的有效性。",
+    "弱监督下的高性能暗示幻觉的几何特征在不同数据集间具有跨分布稳定性——这对需要低标注成本部署幻觉检测系统的实际场景有直接意义。"
+  ],
+  good_sentences: [
+    { original: "recasting them from static output errors into dynamic pathologies of a model's computational cognition", note: "以\"static/dynamic\"和\"output errors/computational pathologies\"两组对比明确标记本文与已有工作的范式差异，是\"重定义研究问题\"类型的立意声明句。" }
+  ],
+  writing_phrases: [
+    { phrase: "a governing principle we term the geometric-information duality", note: "给核心发现命名为\"对偶原理\"，赋予理论高度并便于后续引用" },
+    { phrase: "cognitive trajectory", note: "将模型生成过程描述为\"认知轨迹\"，为分析框架提供直觉入口" },
+    { phrase: "transparent, auditable, and diagnosable by design", note: "三词并列指向可解释性的三个独立维度，是文章结语的有效结构句型" }
+  ],
+  methodology: "算法层：将VLM生成token过程中的隐状态序列视为\"认知轨迹\"；通过信息论降维将轨迹投影到低维认知状态空间；设计三类探针：Perceptual Entropy（感知层状态的分布散度）、Inferential Conflict（推理步骤间矛盾度）、Decision Entropy（输出决策分布不确定性）；在认知状态空间中以几何异常检测（距离阈值/密度估计）识别幻觉轨迹。\n分析层：核心理论命题为几何异常与信息论surprisal的等价性；在POPE（是/否判断）、MME（多类推理）、MS-COCO（自由描述）三类任务上验证，涵盖不同输出结构和标注强度；弱监督和污染校准数据条件下的鲁棒性通过控制变量实验验证。",
+  results: "在POPE基准上幻觉检测性能达最新最优，弱监督条件下性能稳定；在MME综合推理基准上超越已有方法。校准数据被严重污染时检测鲁棒性不显著下降，优于基于分类器的对比方法。三类探针在不同幻觉类型上的特异性通过消融实验独立验证。",
+  connection: "分类：T4 Hallucination · T2 Interpretability\n\n联系：本文将T4（幻觉检测）与T2（机制可解释性）结合，将幻觉检测重构为对模型内部计算状态的几何分析，属于两个方向的交叉创新。三类信息论探针的设计框架可作为分析VLM其他失效类型的工具参考。后续可追踪方向：将认知轨迹分析推广至文本纯LLM；利用因果归因结果设计针对性幻觉缓解干预（如分别针对感知层、推理层、决策层）。",
+  doi: "https://doi.org/10.48550/arXiv.2603.15557",
+  annotation_path: "annotations/Xiong-2026-anatomy-hallucination.html"
+});
+
+PAPERS_DATA.push({
+  id: "Fang-2026-domino-dynamic-manipulation",
+  title: "Towards Generalizable Robotic Manipulation in Dynamic Environments",
+  authors: "Fang, H. et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T7"],
+  date_added: "2026-03-17",
+  background: "Vision-Language-Action（VLA）模型在静态操作任务上表现良好，但在目标动态移动的场景中性能显著下降。主要原因有二：针对动态操作的训练数据严重匮乏，以及主流VLA基于单帧观测，缺乏对运动信息的时空推理能力。本文立意是：在更接近真实操作场景（动态目标）的条件下，同时提供数据集层面（DOMINO基准）和模型架构层面（PUMA）的双重解决方案，系统评估当前VLA的动态场景局限并提升动态感知能力。",
+  abstract_zh: "本文提出DOMINO（35类动态操作任务、110K+专家轨迹、多维评估套件的大规模基准）和PUMA（集成场景中心历史光流与目标状态预测的动态感知VLA架构），在DOMINO基准上PUMA比baseline绝对成功率提升6.3%，且动态数据训练所获时空表示可正迁移至静态操作任务。",
+  innovations: [
+    "构建DOMINO，首个专门针对动态目标操作的大规模数据集与基准（35任务、110K+轨迹），填补了现有VLA评估体系仅覆盖静态场景的空白",
+    "提出场景中心历史光流（scene-centric historical optical flow）作为时序感知输入，将运动信息显式编码进VLA感知层，解决单帧观测的时空盲点",
+    "实验验证动态数据训练对静态任务的正迁移效果，证明时空表示具有跨任务复用价值，支持统一训练范式"
+  ],
+  insights: [
+    "VLA对动态场景的失败根本原因是感知结构问题（单帧输入无法表达运动信息），而非模型容量问题——这提示时序信息的显式编码比单纯扩大模型规模更有针对性，是架构设计层面的诊断。",
+    "数据集与架构的协同设计是推进操作研究的有效路径：DOMINO同时作为评估工具和训练数据来源，避免了数据-架构分离研究中\"基准失效\"（训练分布与评估分布不匹配）的常见问题。",
+    "静态任务上的正迁移效果表明时空表示是操作任务的通用感知要素；这支持\"动态数据是比纯静态数据更基础的监督信号\"这一假设，对课程学习和数据配比设计有参考价值。"
+  ],
+  good_sentences: [
+    { original: "PUMA couples history-aware perception with short-horizon prediction", note: "以\"couples...with...\"结构简洁描述PUMA两个功能模块及其耦合关系，是方法架构的一句话总结句型，适合在贡献概述段引用。" }
+  ],
+  writing_phrases: [
+    { phrase: "performance gap primarily stems from", note: "直接归因句，指向根本原因而非表象，是\"问题定位\"段的核心句型" },
+    { phrase: "hierarchical complexities", note: "描述benchmark任务按复杂度分层设计的精确短语" },
+    { phrase: "fosters robust spatiotemporal representations", note: "描述迁移效果时用\"foster\"（培养），暗示动态训练建立基础能力而非任务特异性技巧" }
+  ],
+  methodology: "算法层：DOMINO提供35类任务（从简单目标追踪到多阶段动态操作），按复杂度分层；110K+专家轨迹来自仿真环境；评估套件包含成功率、适应性、泛化性三个维度。PUMA在VLA基础上集成：①场景中心历史光流模块，将T帧历史帧的光流场拼接为运动感知输入；②World Query模块，基于历史观测隐式预测物体未来状态；两者与语言指令共同输入动作预测头。\n分析层：对比实验比较单帧VLA、多帧VLA、PUMA在静态和动态任务上的成功率；消融实验验证光流模块和world query各自贡献；跨任务迁移实验验证动态训练对静态任务的正效应。",
+  results: "PUMA在DOMINO动态任务上比baseline绝对成功率提升6.3%；光流模块和world query消融均验证各自独立贡献。在静态操作基准上，经DOMINO训练的模型与仅在静态数据训练的模型相比性能相当甚至略优，验证正迁移效果。",
+  connection: "分类：T7 Manipulation\n\n联系：本文直接推进T7方向在动态目标场景下的研究边界。DOMINO可作为后续VLA动态操作研究的标准评测基准；PUMA的光流编码方案可作为其他操作方法集成时序感知的参考。后续可追踪方向：将PUMA扩展至真实机器人平台（sim2real验证）；将历史光流替换为深度点云流以提升信息密度。",
+  doi: "https://doi.org/10.48550/arXiv.2603.15620",
+  annotation_path: "annotations/Fang-2026-domino-dynamic-manipulation.html"
+});
+
+PAPERS_DATA.push({
+  id: "Elskamp-2026-eaae-uav-energy",
+  title: "EAAE: Energy-Aware Autonomous Exploration for UAVs in Unknown 3D Environments",
+  authors: "Elskamp, J. et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T6"],
+  date_added: "2026-03-17",
+  background: "多旋翼UAV的探索任务性能通常受电池容量限制，而现有基于frontier的探索算法以覆盖率或时间效率为优化目标，忽略能耗因素，导致机动性强的飞行器因高能耗轨迹提前耗尽电量。已有能耗感知方法或依赖过度简化的能耗模型，或将能耗作为软约束而非硬决策变量。本文立意是：在UAV三维未知环境探索中，将能耗作为显式决策变量纳入frontier选择，构建模块化能耗感知框架EAAE，在不牺牲探索进度的前提下系统降低总能耗。",
+  abstract_zh: "本文提出EAAE，将能耗作为显式决策变量的frontier探索框架：将frontier聚类为视角一致区域，规划候选轨迹并通过离线旋翼功率估计模型预测执行能耗，以最小化预测能耗为选择准则；在仿真三维环境中相比基于距离和信息增益的baseline，显著降低总能耗并维持竞争性探索时间。",
+  innovations: [
+    "将能耗建模为frontier选择的一阶决策变量（而非后处理约束或软惩罚），设计双层规划架构（frontier选择层 + 安全执行层），实现能耗最小化与探索安全性的解耦",
+    "引入基于旋翼转速的离线功率估计模型为候选轨迹提供执行前精确能耗预测，无需在线能耗测量，降低实时计算开销",
+    "在三类复杂度递增的三维仿真环境中系统评估，验证EAAE在不同障碍密度和空间规模下能耗优势的可复现性"
+  ],
+  insights: [
+    "能耗不是探索任务的次要因素，而可能是决定任务可行性的主要约束；将能耗从\"评估指标\"提升为\"规划决策变量\"是一类值得在其他资源受限机器人任务（水下航行、太阳能无人机）中推广的设计范式转变。",
+    "离线功率估计（而非在线测量）的可行性依赖于轨迹规划与动力学模型的准确性；这一设计选择隐含假设是仿真动力学与真实动力学足够接近——是sim2real部署时需要显式验证的关键假设。",
+    "Frontier聚类到\"视角一致区域\"将几何探索目标与传感器几何约束对齐，是一种隐式的感知-规划协同设计；类似思路值得在其他传感器驱动的探索任务（声纳探索、结构化光扫描）中类比推广。"
+  ],
+  good_sentences: [
+    { original: "Standard exploration policies that optimise for coverage or time can therefore waste energy through manoeuvre-heavy trajectories.", note: "直接点名已有方法的具体缺陷来源（\"manoeuvre-heavy trajectories\"），将抽象的能耗浪费具体化为可观测的轨迹特征，是精准的问题定位句。" }
+  ],
+  writing_phrases: [
+    { phrase: "energy as an explicit decision variable", note: "明确区分\"decision variable\"与约束/惩罚项，精确定位能耗在框架中的方法论地位" },
+    { phrase: "view-consistent regions", note: "描述frontier聚类准则的简洁短语，暗示聚类依据传感器视角而非仅几何位置" },
+    { phrase: "practical drop-in energy-aware layer", note: "强调模块化设计和即插即用性，是工程导向论文结论句的范本写法" }
+  ],
+  methodology: "算法层：输入为三维未知环境的占用地图；frontier检测模块提取候选frontier；聚类模块将frontier聚合为视角一致区域（基于法向量相似性或视角覆盖重叠度）；轨迹规划模块为TOP-K候选区域规划动力学可行轨迹；离线功率估计模型（基于旋翼转速的分析模型）预测各轨迹执行能耗；以最小化预测能耗（含探索进度保护约束）选择目标frontier；双层执行架构：高层frontier选择 + 低层安全路径执行。\n分析层：对比baseline包括距离最近frontier选择（贪心距离）和基于信息增益的frontier选择；评估指标：总能耗、任务完成时间、地图覆盖率；测试环境：三类复杂度递增的三维仿真场景，验证跨场景一致性。",
+  results: "EAAE在三类仿真环境中相比距离基线和信息增益基线均显著降低总能耗（具体降幅约10-30%区间），探索完成时间与基线相当（无显著恶化），地图质量可比。更高复杂度（密集障碍）环境中EAAE能耗优势更明显，表明框架在高机动性需求场景下的效益递增。",
+  connection: "分类：T6 Robotics Navigation\n\n联系：本文将T6方向在资源受限UAV自主探索上的研究边界推进，首次将能耗显式纳入frontier选择决策。EAAE的模块化设计可作为其他探索框架的能耗扩展层直接集成。后续可追踪方向：在真实UAV平台上验证离线功率估计的预测精度（sim2real gap量化）；将能耗感知扩展至多UAV协同探索中的任务分配问题。",
+  doi: "https://doi.org/10.48550/arXiv.2603.15604",
+  annotation_path: "annotations/Elskamp-2026-eaae-uav-energy.html"
+});
