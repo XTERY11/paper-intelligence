@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # Paperwise 每日任务：抓取论文 + 发送邮件 + 同步 GitHub
-set -e
+# set -e 不用，避免 step 1 失败时中断后续步骤
 LOG="/home/ctx/papers/digest.log"
+
+# 确保 claude 可被 cron 找到
+export PATH="/home/ctx/.local/bin:$PATH"
 
 echo "" >> "$LOG"
 echo "════════════════════════════════" >> "$LOG"
@@ -17,7 +20,7 @@ cd /home/ctx/papers
 
 # Step 1: 运行 digest
 echo "[1/3] Running paper digest..." | tee -a "$LOG"
-claude --dangerously-skip-permissions --print "/paper digest" >> "$LOG" 2>&1
+claude --dangerously-skip-permissions --print "/paper digest" >> "$LOG" 2>&1 || true
 EXIT_CODE=$?
 echo "$(date '+%Y-%m-%d %H:%M:%S') digest 完成 (exit: $EXIT_CODE)" >> "$LOG"
 
