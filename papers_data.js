@@ -416,3 +416,190 @@ PAPERS_DATA.push({
   doi: "https://doi.org/10.48550/arXiv.2603.15604",
   annotation_path: "annotations/Elskamp-2026-eaae-uav-energy.html"
 });
+
+// ── 2026-03-18 digest ──────────────────────────────
+
+PAPERS_DATA.push({
+  id: "Luo-2026-deepvision-vla-manipulation",
+  title: "Look Before Acting: Enhancing Vision Foundation Representations for Vision-Language-Action Models",
+  authors: "Yulin Luo et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T7", "T1"],
+  date_added: "2026-03-18",
+  background: "VLA（Vision-Language-Action）模型将预训练视觉-语言基础模型迁移至机器人操控任务，通过端到端学习直接生成动作序列。现有VLA架构通常在较浅层提取视觉特征，在深层进行动作生成，但两类处理之间存在信息流断层。已有研究表明基础模型的深层对动作生成影响更大，但如何在深层维持有效视觉表征尚未得到系统性解决。本文在VLA架构的视觉特征利用问题上，通过系统分析发现深层对视觉 token 的敏感度逐层递减，并在此诊断基础上提出针对性架构设计，在保持视觉-语言对齐的同时将多级视觉特征注入深层，在仿真与实机操控任务上验证了性能增益。",
+  abstract_zh: "本文提出 DeepVision-VLA，通过 Vision-Language Mixture-of-Transformers 框架将多层级视觉特征注入深层 VLA 网络，并结合 Action-Guided Visual Pruning 消除任务无关视觉 token，在仿真与真实机器人操控基准上分别实现 9.0% 和 7.5% 的性能提升。",
+  innovations: [
+    "系统诊断了 VLA 深层对视觉 token 敏感度逐层递减的现象，明确将其定位为 VLA 泛化能力的核心瓶颈，为架构改进提供了直接的分析依据。",
+    "设计 Vision-Language Mixture-of-Transformers 框架，将来自不同深度的视觉特征显式注入动作生成层，在同一架构内同时利用浅层细节与深层语义。",
+    "提出 Action-Guided Visual Pruning 机制，以动作目标为导向动态过滤视觉 token，降低计算冗余并保留操控任务所需的关键视觉信息。"
+  ],
+  insights: [
+    "VLA 模型在动作生成阶段对视觉输入的依赖随网络深度递减，这一现象提示：视觉特征与语言/动作特征的耦合强度本身是一个可优化的架构维度，而非固定属性。",
+    "将 token 剪枝的指导信号从语言相关性转为动作相关性，是将基础模型能力适配到具体下游任务的一种结构性思路，可推广至其他需要任务感知特征选择的领域。",
+    "同一骨干网络在相同数据下通过注入多层视觉特征而非增加参数量实现性能提升，表明现有 VLA 架构存在系统性的视觉利用不足，而非数据或参数规模限制。"
+  ],
+  good_sentences: [
+    { original: "sensitivity to visual tokens progressively decreases in deeper layers during action generation", note: "该句直接陈述了本文核心诊断发现，以可测量的层级趋势代替模糊的\"表征退化\"说法，为后续架构设计建立了因果链。" }
+  ],
+  writing_phrases: [
+    { phrase: "sensitivity to visual tokens progressively decreases in deeper layers", note: "描述多层网络中特定信号随深度的变化趋势" },
+    { phrase: "inject multi-level visual features into deeper network layers", note: "描述跨层特征融合架构设计" },
+    { phrase: "eliminate irrelevant visual tokens while maintaining task-critical information", note: "描述任务感知剪枝的设计目标" }
+  ],
+  methodology: "算法层：输入为多级视觉特征（来自视觉基础模型的不同层）、语言指令 token 和历史动作，通过 Vision-Language Mixture-of-Transformers 将各层视觉特征与对应深度的 Transformer 层融合；Action-Guided Visual Pruning 在推理时根据动作目标对视觉 token 打分并剪枝，输出最终动作序列。关键设计选择：多级特征注入点与主干网络层对齐，剪枝阈值由动作头的注意力权重驱动。",
+  results: "仿真任务上，DeepVision-VLA 相比此前最佳 VLA 基线提升 9.0%；真实世界机器人操控任务上提升 7.5%。论文报告了消融实验验证多级视觉特征注入和 Action-Guided Pruning 各自的独立贡献。",
+  connection: "分类：T7 · T1\n\n联系：本文推进了 VLA 架构的视觉表征利用问题，与 T7 方向的 manipulation 研究直接相关。其诊断框架（层敏感度分析）对 T1 方向分析 Transformer 推理链中信息流动也具有参考价值。token 剪枝策略可与其他基于注意力的 efficiency 方法进行对比研究。",
+  doi: "https://doi.org/10.48550/arXiv.2603.15618",
+  annotation_path: "annotations/Luo-2026-deepvision-vla-manipulation.html"
+});
+
+PAPERS_DATA.push({
+  id: "Liu-2026-primo-r1-process",
+  title: "From Passive Observer to Active Critic: Reinforcement Learning Elicits Process Reasoning for Robotic Manipulation",
+  authors: "Yibin Liu et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T7", "T1"],
+  date_added: "2026-03-18",
+  background: "视频多模态大语言模型（Video MLLM）在机器人操控任务监督中具有广泛应用潜力，但现有方法主要以\"被动观察者\"方式处理视频输入，即逐帧描述动作状态而不主动判断任务进度。这一局限使得模型难以生成对操控进度有实质预测价值的批判性评估。基于强化学习的推理链生成方法（RLVR）已在语言推理任务中展现出激活模型自我批评能力的潜力，但其在机器人操控进度评估这一具体任务上的适用性尚未被系统验证。本文在 7B 参数量的 Video MLLM 与机器人操控进度估计任务的交叉点上，通过 RL 训练将被动观察转化为主动批评，给出了在 RoboFail 等基准上可量化的性能结果。",
+  abstract_zh: "本文提出 PRIMO R1，一个 70 亿参数的 Video MLLM 框架，通过强化学习驱动的推理链训练将模型从被动观察者转化为主动任务进度批评者，在操控进度估计上实现相比专用基线 50% 的 MAE 降低，在 RoboFail 基准上达到 67.0% 准确率，超过 OpenAI o1 6 个百分点。",
+  innovations: [
+    "明确将视频 MLLM 的\"被动观察\"局限形式化为任务进度估计能力的核心障碍，并设计了初始帧-当前帧锚定的时序结构来引导显式进度推理。",
+    "将 RL-based reasoning（RLVR）机制迁移至机器人操控进度估计任务，引导模型生成分步推理链而非直接输出标量，这一迁移将 MAE 降低 50%。",
+    "在 RoboFail 基准上以零样本方式验证泛化性，在 67.0% 准确率上超越 OpenAI o1，证明该框架在任务失败检测这一独立评估轴上也具有竞争力。"
+  ],
+  insights: [
+    "将 RL 训练目标从结果正确性扩展到过程推理质量（process reasoning），是一种将大模型批判性评估能力对准具体任务的通用策略，不局限于操控领域。",
+    "视频输入的时序锚定（初始帧与当前帧的配对）是引导进度估计推理的一个轻量级结构性设计，比端到端时序注意力更具可解释性。",
+    "以 7B 参数模型在特定任务上超越 OpenAI o1，提示针对性 RL 微调对于专业化评估任务比通用大模型规模更具效率优势，这对资源受限的机器人系统部署有参考意义。"
+  ],
+  good_sentences: [
+    { original: "transforms these models into active evaluators", note: "以\"主动\"对\"被动\"的对比框架定位本文贡献，是在 robotic supervision 方向具有代表性的立意表达方式。" }
+  ],
+  writing_phrases: [
+    { phrase: "passive observer to active critic", note: "对比框架，描述模型行为范式转变" },
+    { phrase: "explicit reasoning chains for estimating progress", note: "描述过程推理的实现方式" },
+    { phrase: "strong zero-shot generalization on failure detection tasks", note: "描述跨任务泛化性验证" }
+  ],
+  methodology: "算法层：PRIMO R1 以初始帧与当前帧作为时序锚点，输入为视频片段与任务描述，通过 RL 训练（基于 RLVR 框架）驱动模型生成显式推理链估计操控进度（0–1标量）。奖励函数同时考量推理链质量与最终进度估计的 MAE。模型基于 7B Video MLLM 微调，无需额外专用架构。\n分析层：训练分两阶段——监督预热阶段建立推理链格式，RL 阶段优化推理质量与估计准确度的联合目标。关键假设：初始帧与当前帧的对比足以捕捉操控进度的关键信息。",
+  results: "在操控进度估计任务上，PRIMO R1 相比专用基线 MAE 降低 50%；在 RoboFail 基准（机器人任务失败检测）上以零样本方式达到 67.0% 准确率，超过 OpenAI o1 约 6 个百分点。作者报告了消融实验分别验证时序锚定设计和 RL 训练各自的贡献。",
+  connection: "分类：T7 · T1\n\n联系：本文将 RL 推理链激活方法引入机器人操控监督，直接推进 T7 方向的操控任务评估能力。其过程推理（process reasoning）训练范式与 T1 方向的 chain-of-thought 研究高度相关，可为 T1 中的推理质量评估方法提供参考基准。后续可追踪将 PRIMO R1 框架推广至长时间操控规划监督的工作。",
+  doi: "https://doi.org/10.48550/arXiv.2603.15600",
+  annotation_path: "annotations/Liu-2026-primo-r1-process.html"
+});
+
+PAPERS_DATA.push({
+  id: "Shi-2026-perception-uav-exploration",
+  title: "Perception-Aware Autonomous Exploration in Feature-Limited Environments",
+  authors: "Moji Shi et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T6"],
+  date_added: "2026-03-18",
+  background: "自主探索是无人机（UAV）执行搜索、测绘等任务的基础能力，现有 frontier-based 探索方法以覆盖效率为主要目标，不考虑环境视觉特征的空间分布。然而，在纹理稀疏或视觉特征匮乏区域，立体视觉里程计（stereo odometry）的定位误差会快速累积，最终导致整个导航系统失效。本文在立体相机配备的 UAV 自主探索框架中，针对传统探索方法忽视视觉特征可用性这一局限，提出将视觉特征质量作为显式决策变量，给出了在真实视觉稀疏环境中显著降低定位误差的系统性方案。",
+  abstract_zh: "本文提出分层感知感知自主探索框架，通过全局特征图评估候选 frontier 的视觉特征可用性并优化连续偏航轨迹，在仿真及真实室内低纹理环境中实现里程计误差阈值触发前约 30% 的更高覆盖率。",
+  innovations: [
+    "构建全局特征图对环境视觉特征密度进行空间建模，将特征可用性从局部观测提升为全局规划依据，使 frontier 选择从纯覆盖优化转向感知-探索联合优化。",
+    "在连续偏航轨迹优化中显式加入特征保持约束，确保 UAV 在飞行过程中维持稳定的视觉跟踪窗口，而不仅依赖离散 frontier 选点。",
+    "在真实室内视觉稀疏环境中完成实飞验证，将方法适用范围从仿真扩展至无法通过增加纹理绕过的真实低特征场景。"
+  ],
+  insights: [
+    "探索效率与感知质量之间存在系统性权衡：最大覆盖策略可能将 UAV 引导至导致定位失效的区域，这表明在 UAV 规划中将感知系统的健康度作为约束而非事后检测是必要的。",
+    "全局特征图为视觉稀疏区域提前预警提供了一个轻量级但有效的替代方案，相比端到端视觉里程计鲁棒性研究，这一方法在不改变感知模块的前提下即可提升系统可靠性。",
+    "偏航角作为独立优化自由度在 UAV 规划中常被简化处理，本文表明偏航轨迹的连续优化对视觉里程计稳定性有可量化的贡献，值得在其他导航框架中关注。"
+  ],
+  good_sentences: [
+    { original: "coupling exploration efficiency with visual feature quality", note: "该短语精确描述了本文的核心设计哲学——将探索目标从单一覆盖拓展为双目标优化，适合在 UAV 导航方向的相关工作中引用。" }
+  ],
+  writing_phrases: [
+    { phrase: "coupling exploration efficiency with feature observability", note: "描述双目标规划框架" },
+    { phrase: "prioritize informative navigation targets", note: "描述感知驱动的 frontier 选择策略" },
+    { phrase: "before odometry error exceeds specified thresholds", note: "描述以定位误差阈值为指标的性能评估方式" }
+  ],
+  methodology: "算法层：分层框架包含全局规划层（基于全局特征图对 frontier 候选打分，特征密度高的候选获得更高优先级）和局部控制层（连续偏航轨迹优化，最大化飞行路径上视觉特征的跟踪窗口）。输入为实时立体图像和点云，输出为兼顾覆盖进度与特征可用性的探索路径。关键超参数：特征密度权重与覆盖权重的平衡系数；偏航优化的时间窗口长度。与标准 frontier-based 方法的主要区别：引入特征可用性评估层，frontier 选择不再仅依赖距离或信息增益。",
+  results: "仿真实验中，在不同纹理密度场景下，所提方法在里程计误差达到指定阈值前的空间覆盖率比忽略特征质量的方法高约 30%。真实室内实验在视觉稀疏环境中验证了定位误差累积的显著抑制效果。消融实验分别验证全局特征图评估和偏航轨迹优化的独立贡献。",
+  connection: "分类：T6 Robotics Navigation\n\n联系：本文直接推进了 T6 方向 UAV 自主导航的实用鲁棒性研究，将感知系统健康度纳入规划目标是对纯覆盖优化方向的一个有价值补充。全局特征图构建方法可与 visual SLAM 方向的主动感知研究对接。后续可追踪将该框架推广至夜间或雨雾等其他感知退化场景的工作。",
+  doi: "https://doi.org/10.48550/arXiv.2603.15605",
+  annotation_path: "annotations/Shi-2026-perception-uav-exploration.html"
+});
+
+PAPERS_DATA.push({
+  id: "Seo-2026-seoul-world-model",
+  title: "Grounding World Simulation Models in a Real-World Metropolis",
+  authors: "Junyoung Seo et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T5", "T4"],
+  date_added: "2026-03-18",
+  background: "城市级驾驶场景的视频生成是自动驾驶仿真的核心需求，现有自回归视频生成模型在处理真实城市拓扑结构时面临时序不一致、轨迹多样性不足和稀疏数据收集等挑战。基于 retrieval 的条件生成方法已在局部场景中展现出提升一致性的潜力，但如何在数百米范围内维持空间准确性和时序连贯性尚未得到系统解决。本文在真实首尔城市地图约束下，针对 city-scale 视频生成模型的长程时序稳定性问题，通过检索增强条件和虚拟前瞻 Sink 机制给出了首个在多城市（首尔、釜山、Ann Arbor）可量化评估的解决方案。",
+  abstract_zh: "本文提出 Seoul World Model（SWM），通过检索增强条件（以附近街景图像为参考）和 Virtual Lookahead Sink 机制实现城市级驾驶视频生成，在首尔、釜山和 Ann Arbor 三城跨域验证了数百米范围内的空间精度和时序一致性。",
+  innovations: [
+    "设计 Virtual Lookahead Sink 机制，在每段视频块生成时持续将生成过程重新锚定至未来位置的检索图像，系统性地解决长序列自回归漂移问题。",
+    "提出跨时态配对技术与合成训练数据集，在保持空间一致性的同时支持多样化相机运动，弥补了真实数据在轨迹多样性上的固有局限。",
+    "构建视图插值管线用于从稀疏采集图像生成连贯视频，使系统可在非密集采集条件下运行，降低了部署对数据收集基础设施的依赖。"
+  ],
+  insights: [
+    "检索增强条件在视频生成中的核心作用是提供空间锚点而非语义信息，这与 RAG 在语言任务中的使用方式存在本质差异，提示检索机制在不同模态中的作用机理需要独立分析。",
+    "长程视频生成中的时序漂移问题与语言模型中的 context drift 具有结构性相似性，本文的\"未来帧检索重锚定\"策略可类比为视觉域的外部记忆机制。",
+    "在稀疏数据条件下通过合成数据扩充轨迹多样性是一种实用策略，但合成数据分布与真实世界的域差异仍是此类方法的潜在局限，值得在后续评估中持续关注。"
+  ],
+  good_sentences: [
+    { original: "continuously re-grounds each chunk to a retrieved image at a future location", note: "该句清晰描述了 Virtual Lookahead Sink 的核心机制，以\"持续重锚定\"为关键词准确区分了本文方法与标准自回归生成的本质差异。" }
+  ],
+  writing_phrases: [
+    { phrase: "retrieval-augmented conditioning on nearby street-view images", note: "描述以真实场景图像为条件的生成方法" },
+    { phrase: "cross-temporal pairing techniques", note: "描述解决时态错位的数据准备策略" },
+    { phrase: "spatially accurate, temporally coherent videos spanning hundreds of meters", note: "描述城市级视频生成的评估维度" }
+  ],
+  methodology: "算法层：SWM 基于自回归视频生成模型，输入为当前位置 GPS/轨迹、从城市街景数据库检索的附近参考图像，以及文字描述条件。Virtual Lookahead Sink 在每块生成时额外检索未来位置图像作为\"软约束\"，抑制漂移。视图插值管线用于在稀疏街景采集点之间生成中间帧，支持连续轨迹输出。训练数据：首尔街景数据加合成多样化轨迹数据集，跨时态配对处理采集时间不一致问题。",
+  results: "在首尔、釜山、Ann Arbor 三城跨域测试中，SWM 在数百米范围内维持空间精准性和时序一致性。实验验证了 Virtual Lookahead Sink 对长程生成稳定性的贡献，以及视图插值管线在稀疏采集条件下的可行性。作者通过文字场景修改测试展示了方法的条件可控性。",
+  connection: "分类：T5 · T4\n\n联系：本文直接推进了 T5 方向基于世界模型的驾驶仿真研究，检索增强条件生成策略与 T4 方向的 RAG 研究有方法论上的联系。Virtual Lookahead Sink 机制对需要长程一致性的 T5 方向端到端驾驶世界模型具有直接参考价值。",
+  doi: "https://doi.org/10.48550/arXiv.2603.15583",
+  annotation_path: "annotations/Seo-2026-seoul-world-model.html"
+});
+
+PAPERS_DATA.push({
+  id: "Zengaffinen-2026-llm-student-distractor",
+  title: "Can LLMs Model Incorrect Student Reasoning? A Case Study on Distractor Generation",
+  authors: "Yanick Zengaffinen et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T1", "T4"],
+  date_added: "2026-03-18",
+  background: "多选题干扰项（distractor）的自动生成是教育 NLP 的重要任务，有效的干扰项应模拟学生在特定知识点上的真实误解，而非随机错误选项。已有研究表明 LLM 在 distractor 生成上存在明显局限，但具体失效机制尚未被系统分析。此前工作多从最终输出质量评估 LLM 的干扰项生成能力，缺乏对推理策略的过程性分析。本文在 LLM 推理策略与教育误解建模的交叉点上，通过构建推理策略框架分析 LLM 的 distractor 生成过程，识别出失效的具体环节，并给出可量化改进的提示策略。",
+  abstract_zh: "本文对 LLM 在多选题干扰项生成中的推理策略进行系统分析，发现模型普遍采用\"先正确求解→模拟误解→选择候选\"的三步策略，失效主要来源于求解错误和候选选择困难，而非误解模拟本身；在提示中包含正确答案可将干扰项与人工编写的对齐度提升 8%。",
+  innovations: [
+    "构建 LLM 推理策略分析框架，将 distractor 生成分解为三个可独立测量的子步骤（问题求解、误解生成、候选选择），提供了比端到端评估更细粒度的失效归因方法。",
+    "实证发现 LLM 在误解建模本身（即中间步骤）表现尚可，主要失效点在于初始问题求解错误和最终候选选择，这一发现对当前\"LLM 无法建模误解\"的主流假设提出了修正。",
+    "验证了在提示中包含正确答案的简单干预手段可将干扰项与人工标注的对齐度提升 8%，给出了一个无需微调的即用改进方案。"
+  ],
+  insights: [
+    "LLM 在生成\"刻意错误\"的内容时，仍倾向于先建立正确参照系再进行偏移，这一推理结构与 chain-of-thought 中的\"先推理再输出\"范式高度一致，提示 LLM 的推理路径存在固有偏向性。",
+    "将复杂生成任务分解为子步骤并独立测量每步质量，是一种可复用的 LLM 能力诊断方法，可推广至其他需要多步骤推理的生成任务（如逆向推理、反事实生成）。",
+    "简单的提示工程干预（提供正确答案作为锚点）在无需额外训练的情况下实现可量化提升，提示在推理任务中提供明确的参考锚对模型输出质量有系统性影响。"
+  ],
+  good_sentences: [
+    { original: "models typically solve the problem correctly first, then articulate and simulate misconceptions", note: "该句简洁描述了本文发现的 LLM 推理路径，以时序顺序揭示 LLM 内在推理结构，对研究 LLM 推理模式的工作有直接引用价值。" }
+  ],
+  writing_phrases: [
+    { phrase: "difficulties recovering correct solutions and choosing among candidates", note: "描述多步骤任务的失效点定位" },
+    { phrase: "anchoring to accurate solutions when generating educationally plausible incorrect reasoning", note: "描述正确锚点在逆向推理生成中的作用" },
+    { phrase: "alignment with human-authored distractors", note: "描述生成内容与人工标注的对齐度评估" }
+  ],
+  methodology: "算法层：作者构建推理策略分析框架，将 LLM 的 distractor 生成过程分解为三个阶段：（1）正确求解目标题目，（2）生成若干典型误解，（3）从误解候选中选择最合适的干扰项。通过控制提示设计，逐步向 LLM 提供各阶段正确结果作为输入，测量各步骤引入的性能变化。基线方法：标准 prompt 直接要求 LLM 生成干扰项；对比条件包括提供正确答案、提供误解列表等不同程度的信息注入。评估指标：与人工编写干扰项的 n-gram 对齐度及人工评估得分。",
+  results: "在提示中包含正确答案使干扰项与人工标注对齐度提升 8%。通过阶段性信息注入实验，作者定位出失效主要集中于初始求解阶段和候选选择阶段，而误解生成阶段本身的误差相对较小。实验在多个数学主题的多选题数据集上进行验证。",
+  connection: "分类：T1 · T4\n\n联系：本文分析了 LLM 在生成\"刻意错误\"内容时的推理路径，与 T1 方向的 chain-of-thought 和多步推理研究有直接交叉：LLM 的固有推理偏向（先正确再偏移）是理解推理链行为的一个具体案例。T4 方向的 in-context learning 研究可借鉴本文提示设计方法，特别是正确答案锚点对 few-shot 输出质量的影响。",
+  doi: "https://doi.org/10.48550/arXiv.2603.15547",
+  annotation_path: "annotations/Zengaffinen-2026-llm-student-distractor.html"
+});

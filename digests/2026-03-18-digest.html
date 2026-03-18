@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper Digest — 2026-03-18</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --border: #2a2d3e;
+    --accent: #6366f1;
+    --accent2: #818cf8;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --t1: #f59e0b; --t2: #10b981; --t3: #3b82f6;
+    --t4: #ef4444; --t5: #8b5cf6; --t6: #06b6d4; --t7: #ec4899;
+    --mark-thesis: #fef08a; --mark-concept: #fecaca;
+    --mark-evidence: #bfdbfe; --mark-method: #e9d5ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6; }
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .digest-header {
+    background: linear-gradient(135deg, #1e1b4b 0%, #1a1d27 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 2rem 1.5rem;
+  }
+  .digest-header h1 { font-size: 1.6rem; font-weight: 700; color: #fff; margin-bottom: .4rem; }
+  .digest-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: .8rem; }
+  .meta-pill {
+    background: rgba(99,102,241,.15); border: 1px solid rgba(99,102,241,.3);
+    border-radius: 999px; padding: .2rem .8rem; font-size: .8rem; color: var(--accent2);
+  }
+  .topic-summary { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .8rem; }
+  .t-pill {
+    border-radius: 4px; padding: .15rem .55rem; font-size: .75rem; font-weight: 600; color: #fff;
+  }
+  .t1 { background: var(--t1); } .t2 { background: var(--t2); }
+  .t3 { background: var(--t3); } .t4 { background: var(--t4); }
+  .t5 { background: var(--t5); } .t6 { background: var(--t6); } .t7 { background: var(--t7); }
+
+  .papers-grid { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .paper-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .paper-card:hover { border-color: var(--accent); }
+
+  .card-header {
+    padding: 1.25rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 1rem; align-items: flex-start;
+  }
+  .card-num {
+    flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(99,102,241,.2); display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: var(--accent2); font-size: .9rem; margin-top: .15rem;
+  }
+  .card-title-block { flex: 1; }
+  .card-title { font-size: 1.05rem; font-weight: 600; color: #fff; line-height: 1.4; margin-bottom: .4rem; }
+  .card-meta { display: flex; gap: .75rem; flex-wrap: wrap; align-items: center; }
+  .card-authors { font-size: .82rem; color: var(--muted); }
+  .card-venue { font-size: .8rem; color: var(--muted); }
+  .badge { font-size: .8rem; }
+  .topic-tags { display: flex; gap: .3rem; }
+  .topic-tag { border-radius: 4px; padding: .1rem .45rem; font-size: .72rem; font-weight: 600; color: #fff; }
+
+  .card-body { padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+
+  .section-label {
+    font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--accent2); margin-bottom: .35rem;
+  }
+  .section-content { font-size: .88rem; color: var(--text); line-height: 1.65; }
+  .section-content p { margin-bottom: .5rem; }
+  .section-content p:last-child { margin-bottom: 0; }
+
+  .innovations-list, .insights-list { list-style: none; display: flex; flex-direction: column; gap: .5rem; }
+  .innovations-list li, .insights-list li {
+    font-size: .87rem; line-height: 1.6;
+    padding-left: 1.2rem; position: relative;
+  }
+  .innovations-list li::before { content: "①②③"; position: absolute; left: 0; color: var(--accent2); font-weight: 700; }
+  .innovations-list li:nth-child(1)::before { content: "①"; }
+  .innovations-list li:nth-child(2)::before { content: "②"; }
+  .innovations-list li:nth-child(3)::before { content: "③"; }
+  .insights-list li:nth-child(1)::before { content: "①"; position: absolute; left: 0; color: #10b981; font-weight: 700; }
+  .insights-list li:nth-child(2)::before { content: "②"; position: absolute; left: 0; color: #10b981; font-weight: 700; }
+  .insights-list li:nth-child(3)::before { content: "③"; position: absolute; left: 0; color: #10b981; font-weight: 700; }
+
+  .good-sentence {
+    background: rgba(99,102,241,.08); border-left: 3px solid var(--accent);
+    padding: .6rem .9rem; border-radius: 0 6px 6px 0; margin-bottom: .6rem;
+  }
+  .good-sentence .orig { font-style: italic; color: #c7d2fe; font-size: .86rem; margin-bottom: .3rem; }
+  .good-sentence .note { font-size: .82rem; color: var(--muted); }
+
+  .phrases-table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+  .phrases-table td { padding: .4rem .6rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .phrases-table td:first-child { color: #c7d2fe; font-family: 'Consolas', monospace; white-space: nowrap; }
+  .phrases-table td:last-child { color: var(--muted); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  .card-footer {
+    padding: .75rem 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: flex-end;
+  }
+  .doi-link {
+    font-size: .8rem; color: var(--accent2);
+  }
+</style>
+</head>
+<body>
+
+<div class="digest-header">
+  <h1>📰 Paper Digest — 2026-03-18</h1>
+  <div class="digest-meta">
+    <span class="meta-pill">来源: arXiv</span>
+    <span class="meta-pill">抓取: 40 篇</span>
+    <span class="meta-pill">精选: 5 篇</span>
+    <span class="meta-pill">批注语言: 中文</span>
+  </div>
+  <div class="topic-summary">
+    <span class="t-pill t1">T1 LLM Reasoning ×3</span>
+    <span class="t-pill t4">T4 Hallucination &amp; ICL ×2</span>
+    <span class="t-pill t5">T5 Autonomous Driving ×1</span>
+    <span class="t-pill t6">T6 Robotics Navigation ×1</span>
+    <span class="t-pill t7">T7 Manipulation ×2</span>
+  </div>
+</div>
+
+<div class="papers-grid">
+
+  <!-- ─── Paper 1 ─── -->
+  <div class="paper-card">
+    <div class="card-header">
+      <div class="card-num">1</div>
+      <div class="card-title-block">
+        <div class="card-title">Look Before Acting: Enhancing Vision Foundation Representations for Vision-Language-Action Models</div>
+        <div class="card-meta">
+          <span class="card-authors">Yulin Luo et al.</span>
+          <span class="card-venue">arXiv · 2026</span>
+          <span class="badge">📄</span>
+          <div class="topic-tags">
+            <span class="topic-tag t7">T7</span>
+            <span class="topic-tag t1">T1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div>
+        <div class="section-label">背景与立意</div>
+        <div class="section-content">VLA（Vision-Language-Action）模型将预训练视觉-语言基础模型迁移至机器人操控任务，通过端到端学习直接生成动作序列。现有VLA架构通常在较浅层提取视觉特征、在深层进行动作生成，但两类处理之间存在信息流断层。本文通过系统分析发现深层对视觉 token 的敏感度逐层递减，并在此诊断基础上提出针对性架构设计，在保持视觉-语言对齐的同时将多级视觉特征注入深层，在仿真与实机操控任务上验证了性能增益。</div>
+      </div>
+      <div>
+        <div class="section-label">摘要提炼</div>
+        <div class="section-content">本文提出 DeepVision-VLA，通过 Vision-Language Mixture-of-Transformers 框架将多层级视觉特征注入深层 VLA 网络，并结合 Action-Guided Visual Pruning 消除任务无关视觉 token，在仿真与真实机器人操控基准上分别实现 9.0% 和 7.5% 的性能提升。</div>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="section-label">核心创新点</div>
+          <ul class="innovations-list">
+            <li>系统诊断了 VLA 深层对视觉 token 敏感度逐层递减的现象，明确将其定位为 VLA 泛化能力的核心瓶颈，为架构改进提供了直接的分析依据。</li>
+            <li>设计 Vision-Language Mixture-of-Transformers 框架，将来自不同深度的视觉特征显式注入动作生成层，在同一架构内同时利用浅层细节与深层语义。</li>
+            <li>提出 Action-Guided Visual Pruning 机制，以动作目标为导向动态过滤视觉 token，降低计算冗余并保留操控任务所需的关键视觉信息。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-label">三个 Insight</div>
+          <ul class="insights-list">
+            <li>VLA 模型在动作生成阶段对视觉输入的依赖随网络深度递减，提示视觉特征与动作特征的耦合强度本身是一个可优化的架构维度，而非固定属性。</li>
+            <li>将 token 剪枝的指导信号从语言相关性转为动作相关性，是将基础模型能力适配到具体下游任务的一种结构性思路，可推广至其他需要任务感知特征选择的领域。</li>
+            <li>同一骨干网络通过注入多层视觉特征而非增加参数量实现性能提升，表明现有 VLA 架构存在系统性的视觉利用不足，而非数据或参数规模限制。</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">好句摘录</div>
+        <div class="good-sentence">
+          <div class="orig">"sensitivity to visual tokens progressively decreases in deeper layers during action generation"</div>
+          <div class="note">该句直接陈述了本文核心诊断发现，以可测量的层级趋势代替模糊的"表征退化"说法，为后续架构设计建立了因果链。</div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">实验结果</div>
+        <div class="section-content">仿真任务上，DeepVision-VLA 相比此前最佳 VLA 基线提升 9.0%；真实世界机器人操控任务上提升 7.5%。消融实验验证了多级视觉特征注入和 Action-Guided Pruning 各自的独立贡献。</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a href="https://doi.org/10.48550/arXiv.2603.15618" class="doi-link" target="_blank">arXiv: 2603.15618 →</a>
+    </div>
+  </div>
+
+  <!-- ─── Paper 2 ─── -->
+  <div class="paper-card">
+    <div class="card-header">
+      <div class="card-num">2</div>
+      <div class="card-title-block">
+        <div class="card-title">From Passive Observer to Active Critic: Reinforcement Learning Elicits Process Reasoning for Robotic Manipulation</div>
+        <div class="card-meta">
+          <span class="card-authors">Yibin Liu et al.</span>
+          <span class="card-venue">arXiv · 2026</span>
+          <span class="badge">📄</span>
+          <div class="topic-tags">
+            <span class="topic-tag t7">T7</span>
+            <span class="topic-tag t1">T1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div>
+        <div class="section-label">背景与立意</div>
+        <div class="section-content">视频多模态大语言模型（Video MLLM）在机器人操控任务监督中具有广泛应用潜力，但现有方法主要以"被动观察者"方式处理视频输入，即逐帧描述动作状态而不主动判断任务进度。基于强化学习的推理链生成方法（RLVR）已在语言推理任务中展现出激活模型自我批评能力的潜力，但其在机器人操控进度评估这一具体任务上的适用性尚未被系统验证。本文在 7B Video MLLM 与操控进度估计任务的交叉点上，通过 RL 训练将被动观察转化为主动批评，给出了在 RoboFail 等基准上可量化的性能结果。</div>
+      </div>
+      <div>
+        <div class="section-label">摘要提炼</div>
+        <div class="section-content">本文提出 PRIMO R1（7B 参数 Video MLLM），通过强化学习驱动的推理链训练将模型从被动观察者转化为主动任务进度批评者，在操控进度估计上实现相比专用基线 50% 的 MAE 降低，在 RoboFail 基准上达到 67.0% 准确率，超过 OpenAI o1 6 个百分点。</div>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="section-label">核心创新点</div>
+          <ul class="innovations-list">
+            <li>明确将视频 MLLM 的"被动观察"局限形式化为任务进度估计能力的核心障碍，并设计了初始帧-当前帧锚定的时序结构来引导显式进度推理。</li>
+            <li>将 RL-based reasoning（RLVR）机制迁移至机器人操控进度估计任务，引导模型生成分步推理链而非直接输出标量，将 MAE 降低 50%。</li>
+            <li>在 RoboFail 基准上以零样本方式验证泛化性，67.0% 准确率超越 OpenAI o1，证明该框架在任务失败检测这一独立评估轴上也具有竞争力。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-label">三个 Insight</div>
+          <ul class="insights-list">
+            <li>将 RL 训练目标从结果正确性扩展到过程推理质量（process reasoning），是一种将大模型批判性评估能力对准具体任务的通用策略，不局限于操控领域。</li>
+            <li>视频输入的时序锚定（初始帧与当前帧的配对）是引导进度估计推理的轻量级结构性设计，比端到端时序注意力更具可解释性。</li>
+            <li>以 7B 参数模型在特定任务上超越 OpenAI o1，提示针对性 RL 微调对于专业化评估任务比通用大模型规模更具效率优势，对资源受限的机器人系统部署有参考意义。</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">好句摘录</div>
+        <div class="good-sentence">
+          <div class="orig">"transforms these models into active evaluators"</div>
+          <div class="note">以"主动"对"被动"的对比框架定位本文贡献，是在 robotic supervision 方向具有代表性的立意表达方式。</div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">实验结果</div>
+        <div class="section-content">操控进度估计上相比专用基线 MAE 降低 50%；RoboFail 基准零样本准确率 67.0%，超过 OpenAI o1 约 6 个百分点。消融实验分别验证时序锚定设计和 RL 训练各自的贡献。</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a href="https://doi.org/10.48550/arXiv.2603.15600" class="doi-link" target="_blank">arXiv: 2603.15600 →</a>
+    </div>
+  </div>
+
+  <!-- ─── Paper 3 ─── -->
+  <div class="paper-card">
+    <div class="card-header">
+      <div class="card-num">3</div>
+      <div class="card-title-block">
+        <div class="card-title">Perception-Aware Autonomous Exploration in Feature-Limited Environments</div>
+        <div class="card-meta">
+          <span class="card-authors">Moji Shi et al.</span>
+          <span class="card-venue">arXiv · 2026</span>
+          <span class="badge">📄</span>
+          <div class="topic-tags">
+            <span class="topic-tag t6">T6</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div>
+        <div class="section-label">背景与立意</div>
+        <div class="section-content">自主探索是无人机执行搜索、测绘等任务的基础能力，现有 frontier-based 探索方法以覆盖效率为主要目标，不考虑环境视觉特征的空间分布。在纹理稀疏或视觉特征匮乏区域，立体视觉里程计的定位误差会快速累积，最终导致整个导航系统失效。本文在立体相机配备的 UAV 自主探索框架中，针对传统探索方法忽视视觉特征可用性这一局限，提出将视觉特征质量作为显式决策变量，给出了在真实视觉稀疏环境中显著降低定位误差的系统性方案。</div>
+      </div>
+      <div>
+        <div class="section-label">摘要提炼</div>
+        <div class="section-content">本文提出分层感知自主探索框架，通过全局特征图评估候选 frontier 的视觉特征可用性并优化连续偏航轨迹，在仿真及真实室内低纹理环境中实现里程计误差阈值触发前约 30% 的更高覆盖率。</div>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="section-label">核心创新点</div>
+          <ul class="innovations-list">
+            <li>构建全局特征图对环境视觉特征密度进行空间建模，将特征可用性从局部观测提升为全局规划依据，使 frontier 选择从纯覆盖优化转向感知-探索联合优化。</li>
+            <li>在连续偏航轨迹优化中显式加入特征保持约束，确保 UAV 在飞行过程中维持稳定的视觉跟踪窗口，而不仅依赖离散 frontier 选点。</li>
+            <li>在真实室内视觉稀疏环境中完成实飞验证，将方法适用范围从仿真扩展至无法通过增加纹理绕过的真实低特征场景。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-label">三个 Insight</div>
+          <ul class="insights-list">
+            <li>探索效率与感知质量之间存在系统性权衡：最大覆盖策略可能将 UAV 引导至导致定位失效的区域，这表明将感知系统的健康度作为规划约束而非事后检测是必要的。</li>
+            <li>全局特征图为视觉稀疏区域提前预警提供了一个轻量级替代方案，在不改变感知模块的前提下即可提升系统可靠性。</li>
+            <li>偏航角作为独立优化自由度在 UAV 规划中常被简化处理，本文表明偏航轨迹的连续优化对视觉里程计稳定性有可量化的贡献，值得在其他导航框架中关注。</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">好句摘录</div>
+        <div class="good-sentence">
+          <div class="orig">"coupling exploration efficiency with visual feature quality"</div>
+          <div class="note">该短语精确描述了本文的核心设计哲学——将探索目标从单一覆盖拓展为双目标优化，适合在 UAV 导航方向的相关工作中引用。</div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">实验结果</div>
+        <div class="section-content">在不同纹理密度仿真场景下，所提方法在里程计误差达到指定阈值前的空间覆盖率比忽略特征质量的方法高约 30%。真实室内实验在视觉稀疏环境中验证了定位误差累积的显著抑制效果。消融实验分别验证全局特征图评估和偏航轨迹优化的独立贡献。</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a href="https://doi.org/10.48550/arXiv.2603.15605" class="doi-link" target="_blank">arXiv: 2603.15605 →</a>
+    </div>
+  </div>
+
+  <!-- ─── Paper 4 ─── -->
+  <div class="paper-card">
+    <div class="card-header">
+      <div class="card-num">4</div>
+      <div class="card-title-block">
+        <div class="card-title">Grounding World Simulation Models in a Real-World Metropolis</div>
+        <div class="card-meta">
+          <span class="card-authors">Junyoung Seo et al.</span>
+          <span class="card-venue">arXiv · 2026</span>
+          <span class="badge">📄</span>
+          <div class="topic-tags">
+            <span class="topic-tag t5">T5</span>
+            <span class="topic-tag t4">T4</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div>
+        <div class="section-label">背景与立意</div>
+        <div class="section-content">城市级驾驶场景的视频生成是自动驾驶仿真的核心需求，现有自回归视频生成模型在处理真实城市拓扑结构时面临时序不一致、轨迹多样性不足和稀疏数据收集等挑战。基于 retrieval 的条件生成方法已在局部场景中展现出提升一致性的潜力，但如何在数百米范围内维持空间准确性和时序连贯性尚未得到系统解决。本文通过检索增强条件和虚拟前瞻 Sink 机制给出了首个在多城市（首尔、釜山、Ann Arbor）可量化评估的 city-scale 世界模型方案。</div>
+      </div>
+      <div>
+        <div class="section-label">摘要提炼</div>
+        <div class="section-content">本文提出 Seoul World Model（SWM），通过检索增强条件（以附近街景图像为参考）和 Virtual Lookahead Sink 机制实现城市级驾驶视频生成，在首尔、釜山和 Ann Arbor 三城跨域验证了数百米范围内的空间精度和时序一致性。</div>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="section-label">核心创新点</div>
+          <ul class="innovations-list">
+            <li>设计 Virtual Lookahead Sink 机制，在每段视频块生成时持续将生成过程重新锚定至未来位置的检索图像，系统性地解决长序列自回归漂移问题。</li>
+            <li>提出跨时态配对技术与合成训练数据集，在保持空间一致性的同时支持多样化相机运动，弥补了真实数据在轨迹多样性上的固有局限。</li>
+            <li>构建视图插值管线用于从稀疏采集图像生成连贯视频，使系统可在非密集采集条件下运行，降低了部署对数据收集基础设施的依赖。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-label">三个 Insight</div>
+          <ul class="insights-list">
+            <li>检索增强条件在视频生成中的核心作用是提供空间锚点而非语义信息，这与 RAG 在语言任务中的使用方式存在本质差异，提示检索机制在不同模态中的作用机理需要独立分析。</li>
+            <li>长程视频生成中的时序漂移与语言模型中的 context drift 具有结构性相似性，本文的"未来帧检索重锚定"策略可类比为视觉域的外部记忆机制。</li>
+            <li>在稀疏数据条件下通过合成数据扩充轨迹多样性是一种实用策略，但合成数据分布与真实世界的域差异仍是此类方法的潜在局限。</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">好句摘录</div>
+        <div class="good-sentence">
+          <div class="orig">"continuously re-grounds each chunk to a retrieved image at a future location"</div>
+          <div class="note">该句清晰描述了 Virtual Lookahead Sink 的核心机制，以"持续重锚定"为关键词准确区分了本文方法与标准自回归生成的本质差异。</div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">实验结果</div>
+        <div class="section-content">在首尔、釜山、Ann Arbor 三城跨域测试中，SWM 在数百米范围内维持空间精准性和时序一致性。实验验证了 Virtual Lookahead Sink 对长程生成稳定性的贡献，以及视图插值管线在稀疏采集条件下的可行性。作者通过文字场景修改测试展示了方法的条件可控性。</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a href="https://doi.org/10.48550/arXiv.2603.15583" class="doi-link" target="_blank">arXiv: 2603.15583 →</a>
+    </div>
+  </div>
+
+  <!-- ─── Paper 5 ─── -->
+  <div class="paper-card">
+    <div class="card-header">
+      <div class="card-num">5</div>
+      <div class="card-title-block">
+        <div class="card-title">Can LLMs Model Incorrect Student Reasoning? A Case Study on Distractor Generation</div>
+        <div class="card-meta">
+          <span class="card-authors">Yanick Zengaffinen et al.</span>
+          <span class="card-venue">arXiv · 2026</span>
+          <span class="badge">📄</span>
+          <div class="topic-tags">
+            <span class="topic-tag t1">T1</span>
+            <span class="topic-tag t4">T4</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div>
+        <div class="section-label">背景与立意</div>
+        <div class="section-content">多选题干扰项（distractor）的自动生成是教育 NLP 的重要任务，有效的干扰项应模拟学生在特定知识点上的真实误解，而非随机错误选项。已有研究表明 LLM 在 distractor 生成上存在明显局限，但具体失效机制尚未被系统分析。此前工作多从最终输出质量评估 LLM 的干扰项生成能力，缺乏对推理策略的过程性分析。本文通过构建推理策略框架分析 LLM 的 distractor 生成过程，识别出失效的具体环节（解题、误解生成、候选选择），并给出可量化改进的提示策略。</div>
+      </div>
+      <div>
+        <div class="section-label">摘要提炼</div>
+        <div class="section-content">本文对 LLM 在多选题干扰项生成中的推理策略进行系统分析，发现模型普遍采用"先正确求解→模拟误解→选择候选"的三步策略，失效主要来源于求解错误和候选选择困难，而非误解模拟本身；在提示中包含正确答案可将干扰项与人工编写的对齐度提升 8%。</div>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="section-label">核心创新点</div>
+          <ul class="innovations-list">
+            <li>构建 LLM 推理策略分析框架，将 distractor 生成分解为三个可独立测量的子步骤（问题求解、误解生成、候选选择），提供了比端到端评估更细粒度的失效归因方法。</li>
+            <li>实证发现 LLM 在误解建模本身（中间步骤）表现尚可，主要失效点在于初始问题求解错误和最终候选选择，对当前"LLM 无法建模误解"的主流假设提出了修正。</li>
+            <li>验证了在提示中包含正确答案的简单干预手段可将干扰项与人工标注的对齐度提升 8%，给出了一个无需微调的即用改进方案。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="section-label">三个 Insight</div>
+          <ul class="insights-list">
+            <li>LLM 在生成"刻意错误"的内容时，仍倾向于先建立正确参照系再进行偏移，这一推理结构与 chain-of-thought 的"先推理再输出"范式高度一致，提示 LLM 的推理路径存在固有偏向性。</li>
+            <li>将复杂生成任务分解为子步骤并独立测量每步质量，是一种可复用的 LLM 能力诊断方法，可推广至其他需要多步骤推理的生成任务（如逆向推理、反事实生成）。</li>
+            <li>简单的提示工程干预（提供正确答案作为锚点）在无需额外训练的情况下实现可量化提升，提示在推理任务中提供明确的参考锚对模型输出质量有系统性影响。</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">好句摘录</div>
+        <div class="good-sentence">
+          <div class="orig">"models typically solve the problem correctly first, then articulate and simulate misconceptions"</div>
+          <div class="note">该句简洁描述了本文发现的 LLM 推理路径，以时序顺序揭示 LLM 内在推理结构，对研究 LLM 推理模式的工作有直接引用价值。</div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">实验结果</div>
+        <div class="section-content">在提示中包含正确答案使干扰项与人工标注对齐度提升 8%。通过阶段性信息注入实验，作者定位出失效主要集中于初始求解阶段和候选选择阶段，而误解生成阶段本身的误差相对较小。实验在多个数学主题的多选题数据集上进行验证。</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a href="https://doi.org/10.48550/arXiv.2603.15547" class="doi-link" target="_blank">arXiv: 2603.15547 →</a>
+    </div>
+  </div>
+
+</div><!-- /papers-grid -->
+</body>
+</html>
