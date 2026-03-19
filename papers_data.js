@@ -603,3 +603,188 @@ PAPERS_DATA.push({
   doi: "https://doi.org/10.48550/arXiv.2603.15547",
   annotation_path: "annotations/Zengaffinen-2026-llm-student-distractor.html"
 });
+
+// ── 2026-03-19 digest ──────────────────────────────────
+PAPERS_DATA.push({
+  id: "Bondarenko-2026-edge-reasoning-lora",
+  title: "Efficient Reasoning on the Edge",
+  authors: "Yelysei Bondarenko et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T1"],
+  date_added: "2026-03-19",
+  background: "大语言模型推理能力的提升通常依赖 chain-of-thought 推理与大规模参数，在移动设备等资源受限场景下部署极为困难。已有工作缺乏对 CoT 推理 token 开销的约束机制，导致边缘部署面临延迟过长、内存超限等障碍。本文立意在于：在移动设备算力约束下，通过 LoRA 适配器与 RL 驱动的 budget forcing 机制，在 Qwen2.5-7B 上实现高效且准确的 CoT 推理，同时引入动态适配器切换以平衡推理精度与延迟。",
+  abstract_zh: "本文提出面向边缘设备的轻量级 LLM 推理方案，通过 LoRA 适配器结合监督微调使小型模型获得 CoT 推理能力，以强化学习驱动的 budget forcing 限制推理 token 数量；同时引入动态适配器切换与 KV-cache 共享策略，在 Qwen2.5-7B 上实现严格资源约束下的高效准确推理。",
+  innovations: [
+    "Budget forcing via RL：通过 RL 奖励机制约束 CoT 推理 token 预算，使模型学会在 token 限额内完成推理而非简单截断，保持准确率的同时降低移动端计算开销。",
+    "动态适配器切换（Dynamic Adapter-Switching）：为不同任务难度级别训练多个 LoRA 适配器，推理时动态选择配置，使同一模型在不同资源约束下自适应调整推理深度。",
+    "KV-cache 共享策略：跨 LoRA 适配器共享 KV-cache 结构，减少移动场景内存峰值，并支持并行测试时扩展（parallel test-time scaling）。"
+  ],
+  insights: [
+    "推理能力的模型大小依赖性可通过参数高效微调与约束机制解耦：7B 量级模型通过 LoRA + RL budget forcing 可获得与更大模型类似的 CoT 路径，但推理\"深度\"与推理\"长度\"是可分离的设计维度。",
+    "RL 在推理压缩中的作用本质是对推理轨迹的密度奖励：budget forcing 不是截断 CoT，而是通过奖励函数使模型学会用更少步骤完成相同推理任务，与 outcome reward 驱动的推理研究形成互补。",
+    "边缘部署约束倒逼对 CoT 必要性的重新审视：动态适配器切换揭示并非所有问题都需要完整 CoT 路径，\"选择性推理\"（selective reasoning）是边缘 LLM 一个值得独立建模的研究方向。"
+  ],
+  good_sentences: [],
+  writing_phrases: [
+    { phrase: "budget forcing via reinforcement learning", note: "描述以 RL 约束 CoT token 长度的机制" },
+    { phrase: "dynamic adapter-switching", note: "多适配器推理时动态切换的架构设计术语" },
+    { phrase: "strict resource constraints", note: "边缘/移动端部署限制的标准表述" },
+    { phrase: "parallel test-time scaling", note: "描述测试时多路并行扩展以提升精度" }
+  ],
+  methodology: "算法层：输入 Qwen2.5-7B 基础模型 + 推理任务，输出满足 token 预算约束的 CoT 推理结果。关键设计：① 监督微调注入初始 CoT 能力；② RL reward 引导模型在 token 预算内完成推理（budget forcing）；③ 多 LoRA 适配器按难度分级训练，推理时动态切换；④ KV-cache 跨适配器共享以节省内存。超参：LoRA rank、RL token 惩罚系数、适配器切换阈值。",
+  results: "在 Qwen2.5-7B 上验证了 budget forcing 与动态适配器切换的可行性，证明在严格移动端资源约束下可实现有效 CoT 推理。摘要中未给出具体基准数字（需阅读正文获取完整实验数据）。",
+  connection: "分类：T1 LLM Reasoning\n\n联系：本文将 LLM 推理研究从推理能力最大化推向资源约束下的推理效率优化，与 chain-of-thought 和 inference-time scaling 方向互补。Budget forcing via RL 的机制可追踪至 GRPO/RLVR 等近期工作，区别在于奖励信号设计上的效率惩罚维度。后续可追踪方向：将 budget forcing 延伸到推理步骤数约束；将动态适配器切换与推理不确定性估计结合。",
+  doi: "https://doi.org/10.48550/arXiv.2603.16867",
+  annotation_path: "digests/2026-03-19-digest.html#paper-1"
+});
+
+PAPERS_DATA.push({
+  id: "Mao-2026-kestrel-hallucination-grounding",
+  title: "Kestrel: Grounding Self-Refinement for LVLM Hallucination Mitigation",
+  authors: "Jiawei Mao et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T4"],
+  date_added: "2026-03-19",
+  background: "大型视觉-语言模型（LVLM）在视觉问答任务中容易产生幻觉。已有缓解方法依赖额外训练数据或模型微调，在无训练数据场景下适用性受限；朴素自我修正方法存在\"让不可靠模型自我纠错\"的内在矛盾，缺乏外部证据锚定。本文立意在于：在无训练代价前提下，通过显式视觉定位证据与迭代自我精炼机制，系统性降低 LVLM 幻觉输出。",
+  abstract_zh: "本文提出 Kestrel，一个无训练代价的 LVLM 幻觉缓解框架，通过显式视觉定位智能体收集图像区域证据、经 LVLM 评判器验证后驱动迭代答案精炼；在 Qwen3-VL 上 POPE 基准平均提升 +3.31%，MME-Hallucination 提升 +28.34，两个核心模块各自独立贡献约 +2.0% POPE 增益。",
+  innovations: [
+    "证据验证型自我精炼（Evidence-Verified Self-Refinement）：在精炼前插入独立 LVLM 评判器验证视觉证据，防止模型用错误信息循环强化幻觉，解决朴素自我修正的内在矛盾。",
+    "视觉定位智能体作为外部证据源：将 grounding 工具输出结构化为文本注入精炼过程，使答案精炼有显式图像区域锚定，而非仅依赖模型内部注意力机制。",
+    "无训练代价的模块化设计与消融验证：整个框架无需更新任何模型参数，grounding agent 和 self-refinement module 各自独立贡献约 +2.0% POPE 增益，通过系统性消融验证了独立必要性。"
+  ],
+  insights: [
+    "LVLM 幻觉缓解的核心矛盾是：让不可靠模型自我纠错本身依赖模型可靠性。Kestrel 通过外部定位证据和独立验证模块规避这一循环，揭示工具辅助+验证路径在无训练场景下的系统性优势。",
+    "视觉定位工具输出如何转化为 LLM 可读文本是影响精炼质量的关键工程节点，指向多模态推理中工具调用输出的格式设计是被低估的研究维度。",
+    "+28.34 MME-Hallucination 与 +3.31% POPE 的量级差异反映两类基准对幻觉缓解的不同敏感性：MME-H 侧重细粒度辨别，对定位证据介入响应更强——解读绝对提升数字时须结合基准任务结构。"
+  ],
+  good_sentences: [
+    { original: "Training-free framework combining visual grounding with evidence-verified self-refinement mechanism", note: "通过两个关键限定词（training-free, evidence-verified）同时宣示方法实用性门槛和技术路径核心差异点，是描述无训练方法贡献时的精简论文贡献句式。" }
+  ],
+  writing_phrases: [
+    { phrase: "training-free framework", note: "描述无需参数更新的即插即用方法" },
+    { phrase: "evidence-verified self-refinement", note: "自我精炼的变体，强调证据验证步骤区别于朴素自我修正" },
+    { phrase: "visual grounding agent", note: "将 grounding 能力实体化为智能体角色的表述" },
+    { phrase: "explicit visual-grounding", note: "与隐式注意力机制区分的定位方式表述" }
+  ],
+  methodology: "算法层：输入问题+图像+LVLM 初始回答，输出经证据验证精炼后的低幻觉答案。流程：① 视觉定位智能体定位图像相关区域并输出结构化文本；② LVLM 评判器验证证据可靠性；③ 基于验证通过的证据迭代精炼回答；④ 重复至稳定或达轮次上限。整个流程无参数更新，为推理时增强。",
+  results: "配合 Qwen3-VL，POPE 基准平均提升 +3.31%，MME-Hallucination 提升 +28.34。消融实验：grounding agent 和 self-refinement module 各自独立贡献约 +2.0% POPE 增益，验证了两个组件的独立必要性。",
+  connection: "分类：T4 Hallucination & ICL\n\n联系：本文在 LVLM 幻觉缓解中推进了无训练+工具辅助路线，与 RAG 对 LLM 事实性的外部知识增强路线共享外部证据注入设计思路，但面向视觉模态。可追踪后续方向：将证据验证机制与主动问题生成结合；在更大规模 LVLM 或多轮对话场景中测试 evidence-verified refinement 的边界条件。",
+  doi: "https://doi.org/10.48550/arXiv.2603.16664",
+  annotation_path: "digests/2026-03-19-digest.html#paper-2"
+});
+
+PAPERS_DATA.push({
+  id: "Phan-2026-critique-mechanism-reasoning",
+  title: "Decoding the Critique Mechanism in Large Reasoning Models",
+  authors: "Hoang Phan et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T1", "T2"],
+  date_added: "2026-03-19",
+  background: "大型推理模型（LRM）展现出自我纠错能力，但其纠错机制的表示层面工作原理缺乏系统分析。已有解释性工作聚焦层级激活分析或注意力权重可视化，对纠错行为在特征空间中的几何结构尚无系统性刻画。本文立意在于：通过特征空间分析识别 LRM 中代表纠错行为的方向向量（critique vector），在多个模型规模上验证其普遍性，并以无训练代价的表示引导提升错误检测能力。",
+  abstract_zh: "本文对大型推理模型的内部纠错机制进行表示层面的剖析，通过特征空间对比分析识别出可解释的\"批评向量\"（critique vector）；实验在多个模型规模和系列上验证，通过将该向量叠加至目标层激活（representation steering），在无训练代价条件下提升了模型的错误检测能力。",
+  innovations: [
+    "批评向量的识别与几何刻画：在 LRM 隐状态中定位代表纠错行为的方向向量，将纠错能力从功能层面落实到特征空间的具体几何方向，为推理模型可解释性研究提供可操作的分析对象。",
+    "无训练的表示引导干预：将批评向量叠加到目标层激活，无需微调即可增强错误检测行为，验证了表示工程方法在推理能力干预中的可行性。",
+    "跨模型规模和系列的普遍性验证：批评向量在多个不同规模和架构的 LRM 上均被识别，提示纠错机制在表示空间中的几何结构具有跨模型普遍性。"
+  ],
+  insights: [
+    "推理模型的纠错行为在表示空间中存在可识别的几何方向，与 mechanistic interpretability 文献中线性表示假说框架相容。本文为该假说在推理纠错能力上提供实证支持，指出推理能力分析可在特征空间找到可操作的几何锚点。",
+    "表示引导无需训练即可改变模型推理行为，与 LoRA 微调路径在工程成本上形成鲜明对比，提示在需要快速干预但无训练数据时，representation-level 方法是值得优先考虑的基线。",
+    "通过批评向量识别错误检测的何处（哪层、哪方向），将可解释性研究从模型能否自我纠错推进到模型如何自我纠错，对追踪推理链中纠错时机的干预研究具有方法论参考价值。"
+  ],
+  good_sentences: [],
+  writing_phrases: [
+    { phrase: "critique vector", note: "描述特征空间中代表纠错行为的方向向量（可直接借用于类似工作）" },
+    { phrase: "steering latent representations", note: "表示引导的标准术语，描述对隐状态的向量叠加操作" },
+    { phrase: "at no extra training cost", note: "无训练代价干预方法的常见限定表述" },
+    { phrase: "interpretable critique vectors", note: "结合可解释性与具体功能的双重限定短语" }
+  ],
+  methodology: "算法层：输入 LRM 在推理任务中的中间层激活序列（纠错/非纠错对比样本），输出批评向量+引导后的错误检测性能。方法：① 构建纠错行为 vs. 非纠错行为对比样本集；② 在中间层激活上识别区分两类行为的方向向量；③ 推理时将该向量叠加到目标层激活（representation steering）；④ 评估错误检测能力提升。无参数更新，整个干预为推理时操作。\n分析层：与 representation engineering 文献框架一脉相承，将特定行为激活差异投影为方向向量。主要假设：纠错行为在特征空间中对应线性可分方向（线性表示假说）。",
+  results: "在多个模型规模和系列上验证了批评向量的可识别性与跨模型普遍性；representation steering 方法在错误检测任务上实现了无训练代价的性能提升。具体量化结果需阅读论文正文。",
+  connection: "分类：T1 LLM Reasoning · T2 Interpretability\n\n联系：本文处于 LLM Reasoning 与 Interpretability 的交叉地带，将推理能力分析工具延伸至特征空间几何层面。与 mechanistic interpretability 近期工作（circuit analysis、probing）区别在于聚焦推理过程中的动态纠错行为而非静态特征结构。可迁移的分析流程：对比样本→激活差异→方向向量→steering 验证。后续方向：将批评向量扩展为纠错强度连续分布，分析其与推理链长度、任务难度的相关性。",
+  doi: "https://doi.org/10.48550/arXiv.2603.16331",
+  annotation_path: "digests/2026-03-19-digest.html#paper-3"
+});
+
+PAPERS_DATA.push({
+  id: "Deshpande-2026-molmobot-zero-shot",
+  title: "MolmoB0T: Large-Scale Simulation Enables Zero-Shot Manipulation",
+  authors: "Abhay Deshpande et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T7"],
+  date_added: "2026-03-19",
+  background: "机器人操控的仿真到真实迁移长期面临真实数据稀缺与仿真视觉差距两大障碍。已有工作通常需要大量真实场景数据微调，或依赖精心设计的域随机化方案，很少有工作系统性验证纯仿真训练→零样本真实迁移的规模化可行性。本文立意在于：通过完全开源的程序化仿真数据生成引擎生成 180 万条专家轨迹，在不使用任何真实数据微调的条件下，首次以大规模实验证明程序化多样化仿真数据足以支持桌面操控任务的零样本真实迁移。",
+  abstract_zh: "本文提出 MolmoBot-Engine（全开源程序化轨迹生成管道）及 MolmoBot-Data（180 万条合成专家轨迹），训练多个策略变体后在 Franka FR3 和 Rainbow RB-Y1 上实现 79.2% 的零样本真实迁移成功率，超过 π₀.₅ 的 39.2%（+40 个百分点），表明大规模多样化仿真数据可替代真实训练数据实现有效桌面操控迁移。",
+  innovations: [
+    "完全开源的程序化轨迹生成管道（MolmoBot-Engine）：系统性生成覆盖不同物体、摆放和光照的多样化桌面操控场景与 180 万条专家轨迹，实现仿真数据规模化生产，并以完全开源方式发布。",
+    "大规模仿真数据驱动零样本迁移的规模化验证：以仿真数据量与真实泛化能力的关系为核心实验假设，提供操控领域较大规模的纯仿真→零样本真实迁移对比实验，以 79.2% vs. 39.2%（π₀.₅）量化合成数据优势。",
+    "跨平台零样本迁移验证：在 Franka FR3 和 Rainbow RB-Y1 两种关节结构差异显著的机器人平台上均实现有效零样本迁移，排除平台特定适配解释，增强了方法的硬件无关性论证。"
+  ],
+  insights: [
+    "零样本 sim-to-real 迁移的关键条件似乎是仿真数据多样性而非视觉真实感——程序化随机化场景（而非高保真渲染）实现了有效迁移，与先用少量真实数据微调的传统范式形成对照，指出纯仿真驱动路线在特定任务域内的实际可行边界。",
+    "79.2% vs. 39.2%（π₀.₅）的对比揭示：在桌面拾放类任务上，大规模多样化合成数据训练的专有策略可显著超越通用 VLA 基础模型的零样本能力，提示特化合成数据在特定操控任务域内仍优于通用基础模型。",
+    "全开源数据生成管道创造了可复现的零样本操控评测设定，未来工作可在相同基准上比较不同策略架构的数据利用效率（数据量→性能曲线斜率差异），填补操控领域统一零样本评测基准的空缺。"
+  ],
+  good_sentences: [
+    { original: "MolmoBot achieved 79.2% success rate in real world evaluations across 4 settings", note: "以明确数字跨多个设定报告真实迁移结果的直接量化声明句，\"across N settings\"限定语强化结果普遍性——可在类似操控论文性能声明句中借用此结构。" }
+  ],
+  writing_phrases: [
+    { phrase: "zero-shot sim-to-real transfer", note: "零样本仿真到真实迁移的标准术语" },
+    { phrase: "fully open-source pipeline", note: "强调可复现性的工程贡献表述" },
+    { phrase: "without real-world fine-tuning", note: "界定零样本条件的关键限定语" },
+    { phrase: "procedural data generation", note: "描述程序化（算法驱动）场景生成的技术短语" }
+  ],
+  methodology: "算法层：输入仿真场景配置（物体类型、摆放、光照），输出专家轨迹数据集（180 万条）+训练好的操控策略。管道：① MolmoBot-Engine 程序化生成多样化仿真场景；② 专家算法在仿真中生成操控轨迹；③ 在合成数据上训练多个策略变体；④ 直接在真实机器人上零样本评测（不使用真实数据微调）。评测平台：Franka FR3 + Rainbow RB-Y1，4 个桌面拾放设定。",
+  results: "真实机器人桌面拾放任务 4 个设定上，MolmoBot 零样本成功率为 79.2%，显著超过 π₀.₅ 的 39.2%（+40 个百分点）。在 Franka FR3 和 Rainbow RB-Y1 两种平台上均验证了零样本迁移效果。MolmoBot-Data 包含 180 万条合成专家轨迹，由 MolmoBot-Engine 程序化生成并完全开源。",
+  connection: "分类：T7 Manipulation\n\n联系：本文在机器人操控领域推进了纯仿真驱动零样本迁移的可行性论证，直接挑战真实数据不可或缺的工程假设。与 DreamPlan、SIMPLER 等仿真评测工作互补——后者提供评测框架，本文提供大规模数据生成管道。可追踪方向：在接触丰富型任务（插拔、拧螺丝）或可变形物体操控上测试路线边界；分析不同数据规模（1M/5M/10M）与零样本性能的扩展曲线，量化操控任务中的数据扩展定律。",
+  doi: "https://doi.org/10.48550/arXiv.2603.16861",
+  annotation_path: "digests/2026-03-19-digest.html#paper-4"
+});
+
+PAPERS_DATA.push({
+  id: "Ren-2026-m3-gaussian-slam",
+  title: "M\u00b3: Dense Matching Meets Multi-View Foundation Models for Monocular Gaussian Splatting SLAM",
+  authors: "Kerui Ren et al.",
+  year: 2026,
+  venue: "arXiv",
+  citations: 0,
+  badge: "📄",
+  topics: ["T6"],
+  date_added: "2026-03-19",
+  background: "单目 Gaussian Splatting SLAM 在无 RGB-D 传感器条件下实现了高质量场景重建，但现有方法缺乏为 SLAM 设计的稠密匹配能力，在纹理稀少或相机快速运动区域中位姿估计误差较大。多视图基础模型在三维场景理解上表现突出，但特征设计面向场景级理解而非帧间稠密对应，直接用于 SLAM 跟踪时像素匹配精度不足。本文立意在于：为多视图基础模型增加专用稠密匹配头，将精细像素对应能力集成进单目 Gaussian Splatting SLAM，引入动态区域抑制与跨推理内参对齐以处理动态场景与无标定相机。",
+  abstract_zh: "本文提出 M³，在多视图基础模型上增加专用稠密匹配头以获得精细像素对应，结合动态区域抑制与跨推理内参对齐，集成入单目 Gaussian Splatting SLAM；在 ScanNet++ 上 ATE RMSE 相较 VGGT-SLAM 2.0 降低 64.3%，PSNR 相较 ARTDECO 提升 2.11 dB。",
+  innovations: [
+    "多视图基础模型的专用匹配头扩展：在基础模型顶部增加专为稠密像素对应设计的匹配头，使多视图特征从场景级理解细化到像素级匹配精度，以最小化结构修改获得新能力的增量专用化设计路线。",
+    "动态区域抑制（Dynamic Area Suppression）：识别并屏蔽动态物体区域对应，避免动态干扰对全局位姿估计的污染，使系统在非静态场景中保持跟踪鲁棒性。",
+    "跨推理内参对齐（Cross-Inference Intrinsic Alignment）：针对无标定单目相机引入跨帧推理内参一致性约束，在未知相机参数条件下保持稳定跟踪，扩展了方法实际适用范围。"
+  ],
+  insights: [
+    "多视图基础模型的场景级特征与 SLAM 所需的帧间稠密对应处于不同抽象层次。专用匹配头桥接两者的做法指出：将通用视觉基础模型适配至测量密集型工程任务时，增量专用化（顶部增加任务特定模块）往往优于全量微调，这一设计范式在机器人感知与 SLAM 领域具有广泛可迁移价值。",
+    "64.3% ATE RMSE 降低集中在 ScanNet++ 上，提示稠密匹配精度的增益在以密集纹理和室内几何为主的场景中最为显著。在纹理极度稀少或剧烈光照变化场景中的增益边界值得后续工作系统测试，以界定稠密匹配头改进的适用条件。",
+    "动态区域抑制代表了从静态场景假设向动态场景迁移的早期过滤路线——在进入重建管道前过滤动态区域，而非在重建中显式对动态物体建模。两种路线（早期过滤 vs. 显式动态建模）在计算开销与重建完整性上存在根本权衡。"
+  ],
+  good_sentences: [],
+  writing_phrases: [
+    { phrase: "dedicated matching heads", note: "描述在基础模型上增加专用任务头的架构术语" },
+    { phrase: "dynamic area suppression", note: "动态场景处理中的区域过滤策略术语" },
+    { phrase: "cross-inference intrinsic alignment", note: "无标定系统的跨帧内参一致性约束描述" },
+    { phrase: "fine-grained dense correspondences", note: "描述像素级精细对应关系，区别于稀疏特征匹配" }
+  ],
+  methodology: "算法层：输入单目视频帧序列（无预先相机标定），输出相机位姿轨迹 + 3D Gaussian Splatting 场景表示。方法：① 多视图基础模型提取帧间场景级特征；② 专用稠密匹配头生成精细像素对应；③ 动态区域抑制过滤运动物体干扰；④ 跨推理内参对齐保持无标定场景一致性；⑤ 对应关系驱动跟踪与 Gaussian Splatting 重建联合优化。基准：ScanNet++（室内）+室外数据集，与 VGGT-SLAM 2.0、ARTDECO 等对比。",
+  results: "在 ScanNet++ 上，ATE RMSE 相较 VGGT-SLAM 2.0 降低 64.3%，场景重建 PSNR 相较 ARTDECO 提升 2.11 dB。室内外双基准验证表明方法对不同场景类型具有普遍适用性。",
+  connection: "分类：T6 Robotics Navigation\n\n联系：本文属于视觉 SLAM 方向（T6），推进了单目 Gaussian Splatting SLAM 在精度和动态场景适应性上的研究边界。从更大视角看，本文是基础模型+专用任务头范式在 SLAM 中的落地案例，与 navigation 领域中将视觉基础模型用于场景理解的趋势相符。可追踪方向：在大量动态物体的真实场景（街道、人流密集室内）上测试动态区域抑制的鲁棒性上限；将 M³ 框架扩展至多相机（stereo/multi-cam）设定。",
+  doi: "https://doi.org/10.48550/arXiv.2603.16844",
+  annotation_path: "digests/2026-03-19-digest.html#paper-5"
+});
